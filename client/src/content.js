@@ -12,6 +12,7 @@ class InterviewCopilotFetch {
     this.isExpanded = true; // Default to expanded (full view)
     this.isDragging = false;
     this.isResizing = false;
+    this.isMinimized = false; // Track minimize state
     this.dragOffset = { x: 0, y: 0 };
     this.currentPosition = { top: 20, right: 20 };
     this.streamResponses = true;
@@ -147,6 +148,7 @@ class InterviewCopilotFetch {
           <button id="toggle-listening" class="btn-control" title="Toggle Listening" style="width: 36px; height: 36px; font-size: 16px;">🎤</button>
           <button id="expand-toggle" class="btn-control" title="Collapse to Compact" style="width: 36px; height: 36px; font-size: 16px;">⇱</button>
           <button id="settings-toggle" class="btn-control" title="Settings" style="width: 36px; height: 36px; font-size: 16px;">⚙️</button>
+          <button id="minimize-overlay" class="btn-control" title="Minimize Panel" style="width: 36px; height: 36px; font-size: 16px;">🗕</button>
           <button id="emergency-hide" class="btn-control" title="Emergency Hide (Ctrl+Shift+H)" style="width: 36px; height: 36px; font-size: 16px;">👁️</button>
           <button id="close-overlay" class="btn-control" style="width: 36px; height: 36px; font-size: 18px;">×</button>
         </div>
@@ -286,20 +288,22 @@ class InterviewCopilotFetch {
         </div>
       </div>
       
-      <!-- Resize Handle at Bottom -->
-      <div id="resize-handle" class="resize-handle" style="
+      <!-- Multi-Directional Resize System -->
+      <!-- Bottom resize handle -->
+      <div id="resize-handle-s" class="resize-handle" data-direction="s" style="
         position: absolute; 
         bottom: 0; 
-        left: 0; 
-        right: 0; 
+        left: 8px; 
+        right: 8px; 
         height: 8px; 
         background: linear-gradient(to bottom, transparent, rgba(100, 181, 246, 0.3));
         cursor: ns-resize; 
-        border-radius: 0 0 20px 20px;
+        border-radius: 0 0 12px 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        z-index: 10;
       " title="Drag to resize height">
         <div style="
           width: 30px; 
@@ -309,15 +313,127 @@ class InterviewCopilotFetch {
           box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         "></div>
       </div>
+      
+      <!-- Right resize handle -->
+      <div id="resize-handle-e" class="resize-handle" data-direction="e" style="
+        position: absolute; 
+        top: 8px; 
+        bottom: 8px; 
+        right: 0; 
+        width: 8px; 
+        background: linear-gradient(to right, transparent, rgba(100, 181, 246, 0.3));
+        cursor: ew-resize; 
+        border-radius: 0 12px 12px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 10;
+      " title="Drag to resize width">
+        <div style="
+          width: 3px; 
+          height: 30px; 
+          background: rgba(100, 181, 246, 0.5); 
+          border-radius: 2px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        "></div>
+      </div>
+      
+      <!-- Left resize handle -->
+      <div id="resize-handle-w" class="resize-handle" data-direction="w" style="
+        position: absolute; 
+        top: 8px; 
+        bottom: 8px; 
+        left: 0; 
+        width: 8px; 
+        background: linear-gradient(to left, transparent, rgba(100, 181, 246, 0.3));
+        cursor: ew-resize; 
+        border-radius: 12px 0 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 10;
+      " title="Drag to resize width">
+        <div style="
+          width: 3px; 
+          height: 30px; 
+          background: rgba(100, 181, 246, 0.5); 
+          border-radius: 2px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        "></div>
+      </div>
+      
+      <!-- Corner resize handles -->
+      <!-- Bottom-right corner -->
+      <div id="resize-handle-se" class="resize-handle" data-direction="se" style="
+        position: absolute; 
+        bottom: 0; 
+        right: 0; 
+        width: 16px; 
+        height: 16px; 
+        background: rgba(100, 181, 246, 0.4);
+        cursor: nw-resize; 
+        border-radius: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 11;
+      " title="Drag to resize both width and height">
+        <div style="
+          width: 8px; 
+          height: 8px; 
+          background: rgba(100, 181, 246, 0.7); 
+          border-radius: 50%;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        "></div>
+      </div>
+      
+      <!-- Bottom-left corner -->
+      <div id="resize-handle-sw" class="resize-handle" data-direction="sw" style="
+        position: absolute; 
+        bottom: 0; 
+        left: 0; 
+        width: 16px; 
+        height: 16px; 
+        background: rgba(100, 181, 246, 0.4);
+        cursor: ne-resize; 
+        border-radius: 0 0 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 11;
+      " title="Drag to resize width and height">
+        <div style="
+          width: 8px; 
+          height: 8px; 
+          background: rgba(100, 181, 246, 0.7); 
+          border-radius: 50%;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        "></div>
+      </div>
     `;
 
     // Use React Portal-style rendering
     document.body.appendChild(this.overlay);
     
-    // Restore saved height if available
+    // Restore saved dimensions if available
     if (this.savedHeight && this.savedHeight > (this.isExpanded ? 420 : 280)) {
       this.overlay.style.height = this.savedHeight + 'px';
       this.overlay.style.maxHeight = this.savedHeight + 'px';
+    }
+    
+    if (this.savedWidth && this.savedWidth > 320) {
+      this.overlay.style.width = this.savedWidth + 'px';
+      this.overlay.style.maxWidth = this.savedWidth + 'px';
+    }
+    
+    // Restore minimize state if needed
+    if (this.isMinimized) {
+      // Delay to ensure DOM is ready
+      setTimeout(() => this.toggleMinimize(), 100);
     }
     
     // Setup all event handlers
@@ -350,6 +466,11 @@ class InterviewCopilotFetch {
     // Close overlay
     document.getElementById('close-overlay').addEventListener('click', () => {
       this.overlay.style.display = 'none';
+    });
+
+    // Minimize overlay
+    document.getElementById('minimize-overlay').addEventListener('click', () => {
+      this.toggleMinimize();
     });
 
     // Settings controls
@@ -426,7 +547,6 @@ class InterviewCopilotFetch {
 
   setupDragAndDrop() {
     const header = this.overlay.querySelector('.copilot-header');
-    const resizeHandle = this.overlay.querySelector('#resize-handle');
     
     // Setup header dragging
     header.addEventListener('mousedown', (e) => {
@@ -440,31 +560,71 @@ class InterviewCopilotFetch {
       e.preventDefault();
     });
     
-    // Setup resize handle
-    resizeHandle.addEventListener('mousedown', (e) => {
-      this.isResizing = true;
-      this.initialHeight = this.overlay.offsetHeight;
-      this.initialMouseY = e.clientY;
-      
-      document.addEventListener('mousemove', this.handleResize.bind(this));
-      document.addEventListener('mouseup', this.handleResizeEnd.bind(this));
-      
-      e.preventDefault();
-      e.stopPropagation(); // Prevent header drag
-    });
+    // Setup multi-directional resize handles
+    this.setupResizeHandles();
+  }
+
+  setupResizeHandles() {
+    // Get all resize handles
+    const resizeHandles = this.overlay.querySelectorAll('.resize-handle');
     
-    // Enhanced resize handle visual feedback
-    resizeHandle.addEventListener('mouseenter', () => {
-      resizeHandle.style.background = 'linear-gradient(to bottom, transparent, rgba(100, 181, 246, 0.5))';
-      resizeHandle.querySelector('div').style.background = 'rgba(100, 181, 246, 0.8)';
+    resizeHandles.forEach(handle => {
+      const direction = handle.getAttribute('data-direction');
+      
+      // Setup mouse events for each handle
+      handle.addEventListener('mousedown', (e) => {
+        this.isResizing = true;
+        this.resizeDirection = direction;
+        this.initialRect = this.overlay.getBoundingClientRect();
+        this.initialMouse = { x: e.clientX, y: e.clientY };
+        
+        document.addEventListener('mousemove', this.handleMultiResize.bind(this));
+        document.addEventListener('mouseup', this.handleResizeEnd.bind(this));
+        
+        e.preventDefault();
+        e.stopPropagation(); // Prevent header drag
+      });
+      
+      // Enhanced visual feedback for each handle
+      handle.addEventListener('mouseenter', () => {
+        this.highlightResizeHandle(handle, true);
+      });
+      
+      handle.addEventListener('mouseleave', () => {
+        if (!this.isResizing) {
+          this.highlightResizeHandle(handle, false);
+        }
+      });
     });
+  }
+
+  highlightResizeHandle(handle, highlight) {
+    const direction = handle.getAttribute('data-direction');
+    const innerDiv = handle.querySelector('div');
     
-    resizeHandle.addEventListener('mouseleave', () => {
-      if (!this.isResizing) {
-        resizeHandle.style.background = 'linear-gradient(to bottom, transparent, rgba(100, 181, 246, 0.3))';
-        resizeHandle.querySelector('div').style.background = 'rgba(100, 181, 246, 0.5)';
+    if (highlight) {
+      if (direction.includes('e') || direction.includes('w')) {
+        // Horizontal handles
+        handle.style.background = handle.style.background.replace('0.3)', '0.5)');
+      } else {
+        // Vertical handles
+        handle.style.background = handle.style.background.replace('0.3)', '0.5)');
       }
-    });
+      if (innerDiv) {
+        innerDiv.style.background = 'rgba(100, 181, 246, 0.8)';
+      }
+    } else {
+      if (direction.includes('e') || direction.includes('w')) {
+        // Horizontal handles
+        handle.style.background = handle.style.background.replace('0.5)', '0.3)');
+      } else {
+        // Vertical handles  
+        handle.style.background = handle.style.background.replace('0.5)', '0.3)');
+      }
+      if (innerDiv) {
+        innerDiv.style.background = 'rgba(100, 181, 246, 0.5)';
+      }
+    }
   }
 
   handleDrag(e) {
@@ -497,40 +657,100 @@ class InterviewCopilotFetch {
     this.saveUserPreferences();
   }
 
-  handleResize(e) {
+  handleMultiResize(e) {
     if (!this.isResizing) return;
     
-    const deltaY = e.clientY - this.initialMouseY;
-    const newHeight = this.initialHeight + deltaY;
+    const deltaX = e.clientX - this.initialMouse.x;
+    const deltaY = e.clientY - this.initialMouse.y;
     
-    // Set minimum and maximum height constraints
+    let newWidth = this.initialRect.width;
+    let newHeight = this.initialRect.height;
+    let newLeft = this.initialRect.left;
+    let newTop = this.initialRect.top;
+    
+    // Calculate new dimensions based on resize direction
+    switch (this.resizeDirection) {
+      case 's': // South (bottom)
+        newHeight = this.initialRect.height + deltaY;
+        break;
+      case 'e': // East (right)
+        newWidth = this.initialRect.width + deltaX;
+        break;
+      case 'w': // West (left)
+        newWidth = this.initialRect.width - deltaX;
+        newLeft = this.initialRect.left + deltaX;
+        break;
+      case 'se': // Southeast (bottom-right)
+        newWidth = this.initialRect.width + deltaX;
+        newHeight = this.initialRect.height + deltaY;
+        break;
+      case 'sw': // Southwest (bottom-left)
+        newWidth = this.initialRect.width - deltaX;
+        newHeight = this.initialRect.height + deltaY;
+        newLeft = this.initialRect.left + deltaX;
+        break;
+    }
+    
+    // Apply constraints
+    const minWidth = 320;
     const minHeight = this.isExpanded ? 420 : 280;
-    const maxHeight = window.innerHeight - 100; // Leave some space from screen edges
+    const maxWidth = window.innerWidth - 40;
+    const maxHeight = window.innerHeight - 100;
     
-    const boundedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+    // Constrain dimensions
+    newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+    newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
     
-    // Update overlay height
-    this.overlay.style.height = boundedHeight + 'px';
-    this.overlay.style.maxHeight = boundedHeight + 'px';
+    // Constrain position (for left-side resizing)
+    if (this.resizeDirection.includes('w')) {
+      const maxLeft = this.initialRect.right - minWidth;
+      newLeft = Math.min(newLeft, maxLeft);
+      newLeft = Math.max(0, newLeft);
+      
+      // Recalculate width based on constrained left position
+      newWidth = this.initialRect.right - newLeft;
+    }
     
-    // Update container heights for better content flow
+    // Apply the new dimensions and position smoothly
+    this.overlay.style.width = newWidth + 'px';
+    this.overlay.style.height = newHeight + 'px';
+    this.overlay.style.maxWidth = newWidth + 'px';
+    this.overlay.style.maxHeight = newHeight + 'px';
+    
+    if (this.resizeDirection.includes('w')) {
+      this.overlay.style.left = newLeft + 'px';
+      this.overlay.style.right = 'auto';
+    }
+    
+    // Update content areas for better flow
+    this.updateContentAreas(newWidth, newHeight);
+  }
+
+  updateContentAreas(width, height) {
     const compactSection = this.overlay.querySelector('.compact-section');
     const expandedSection = this.overlay.querySelector('.expanded-section');
+    const headerHeight = 70;
+    const statusHeight = 40;
+    const padding = 40;
     
-    if (this.isExpanded && expandedSection.style.display !== 'none') {
+    const availableHeight = height - headerHeight - statusHeight - padding;
+    
+    if (this.isExpanded && expandedSection && expandedSection.style.display !== 'none') {
       // In expanded mode, adjust content areas
-      const headerHeight = 70; // Approximate header height
-      const statusHeight = 40; // Approximate status bar height
-      const availableHeight = boundedHeight - headerHeight - statusHeight - 40; // Padding
-      
       expandedSection.style.maxHeight = availableHeight + 'px';
       expandedSection.style.overflowY = 'auto';
-    } else {
-      // In compact mode, adjust AI response area
-      const headerHeight = 70;
-      const statusHeight = 40;
-      const availableHeight = boundedHeight - headerHeight - statusHeight - 40;
       
+      // Make transcript and response areas flexible
+      const transcriptArea = expandedSection.querySelector('#live-transcript');
+      const responseArea = expandedSection.querySelector('#ai-response-streaming');
+      
+      if (transcriptArea && responseArea) {
+        const halfHeight = Math.floor(availableHeight / 2) - 20;
+        transcriptArea.style.maxHeight = halfHeight + 'px';
+        responseArea.style.maxHeight = halfHeight + 'px';
+      }
+    } else if (compactSection) {
+      // In compact mode, adjust AI response area
       const responseArea = compactSection.querySelector('#ai-response-streaming');
       if (responseArea) {
         responseArea.style.maxHeight = Math.max(120, availableHeight - 60) + 'px';
@@ -540,13 +760,16 @@ class InterviewCopilotFetch {
 
   handleResizeEnd() {
     this.isResizing = false;
-    document.removeEventListener('mousemove', this.handleResize);
+    this.resizeDirection = null;
+    
+    document.removeEventListener('mousemove', this.handleMultiResize);
     document.removeEventListener('mouseup', this.handleResizeEnd);
     
-    // Reset resize handle appearance
-    const resizeHandle = this.overlay.querySelector('#resize-handle');
-    resizeHandle.style.background = 'linear-gradient(to bottom, transparent, rgba(100, 181, 246, 0.3))';
-    resizeHandle.querySelector('div').style.background = 'rgba(100, 181, 246, 0.5)';
+    // Reset all resize handle appearances
+    const resizeHandles = this.overlay.querySelectorAll('.resize-handle');
+    resizeHandles.forEach(handle => {
+      this.highlightResizeHandle(handle, false);
+    });
     
     this.saveUserPreferences();
   }
@@ -621,6 +844,59 @@ class InterviewCopilotFetch {
         this.overlay.style.opacity = this.opacity;
       }, 200);
     }
+  }
+
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
+    
+    const compactSection = this.overlay.querySelector('.compact-section');
+    const expandedSection = this.overlay.querySelector('.expanded-section');
+    const statusBar = this.overlay.querySelector('.status-bar');
+    const resizeHandles = this.overlay.querySelectorAll('.resize-handle');
+    const minimizeBtn = this.overlay.querySelector('#minimize-overlay');
+    
+    if (this.isMinimized) {
+      // Store current dimensions before minimizing
+      this.preMinimizeHeight = this.overlay.style.height;
+      this.preMinimizeWidth = this.overlay.style.width;
+      
+      // Hide content sections and resize handles
+      if (compactSection) compactSection.style.display = 'none';
+      if (expandedSection) expandedSection.style.display = 'none';
+      if (statusBar) statusBar.style.display = 'none';
+      resizeHandles.forEach(handle => handle.style.display = 'none');
+      
+      // Set minimal height (just header)
+      this.overlay.style.height = '60px';
+      this.overlay.style.minHeight = '60px';
+      
+      // Update minimize button icon
+      minimizeBtn.innerHTML = '🗖'; // Restore icon
+      minimizeBtn.title = 'Restore Panel';
+      
+      // Add minimized visual indicator
+      this.overlay.style.boxShadow = '0 2px 8px rgba(100, 181, 246, 0.3), inset 0 0 0 2px rgba(100, 181, 246, 0.2)';
+      
+    } else {
+      // Restore content sections and resize handles
+      if (compactSection) compactSection.style.display = this.isExpanded ? 'none' : 'block';
+      if (expandedSection) expandedSection.style.display = this.isExpanded ? 'block' : 'none';
+      if (statusBar) statusBar.style.display = 'flex';
+      resizeHandles.forEach(handle => handle.style.display = 'block');
+      
+      // Restore previous dimensions
+      this.overlay.style.height = this.preMinimizeHeight || (this.isExpanded ? '500px' : '320px');
+      this.overlay.style.minHeight = this.isExpanded ? '420px' : '280px';
+      
+      // Update minimize button icon
+      minimizeBtn.innerHTML = '🗕'; // Minimize icon
+      minimizeBtn.title = 'Minimize Panel';
+      
+      // Restore normal shadow
+      this.overlay.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)';
+    }
+    
+    this.saveUserPreferences();
   }
 
   setupAutoHide() {
@@ -1068,11 +1344,13 @@ class InterviewCopilotFetch {
         const prefs = JSON.parse(saved);
         this.opacity = prefs.opacity || 0.98;
         this.isExpanded = prefs.isExpanded !== undefined ? prefs.isExpanded : true; // Default to expanded
+        this.isMinimized = prefs.isMinimized || false;
         this.streamResponses = prefs.streamResponses !== false;
         this.autoHideEnabled = prefs.autoHideEnabled || false;
         this.currentPosition = prefs.position || { top: 20, right: 20 };
         this.showConfidence = prefs.showConfidence !== false;
         this.savedHeight = prefs.overlayHeight;
+        this.savedWidth = prefs.overlayWidth;
       }
     } catch (error) {
       console.log('Could not load preferences:', error);
@@ -1084,11 +1362,13 @@ class InterviewCopilotFetch {
       const prefs = {
         opacity: this.opacity,
         isExpanded: this.isExpanded,
+        isMinimized: this.isMinimized,
         streamResponses: this.streamResponses,
         autoHideEnabled: this.autoHideEnabled,
         position: this.currentPosition,
         showConfidence: this.showConfidence,
-        overlayHeight: this.overlay ? this.overlay.offsetHeight : null
+        overlayHeight: this.overlay ? this.overlay.offsetHeight : null,
+        overlayWidth: this.overlay ? this.overlay.offsetWidth : null
       };
       localStorage.setItem('interview-copilot-preferences', JSON.stringify(prefs));
     } catch (error) {
