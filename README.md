@@ -1,6 +1,6 @@
 # 🤖 Interview Co-Pilot
 
-A real-time AI assistant for interviews that provides intelligent responses during live video calls on Google Meet and Zoom.
+A real-time AI assistant for interviews that provides intelligent responses during live video calls on Google Meet and Zoom. Specifically optimized for **QA automation testing** interviews with personalized context for software testing professionals.
 
 ## 🌟 Features
 
@@ -8,25 +8,37 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 
 - **Real-time Speech Recognition**: Captures interviewer questions using Web Speech API
 - **AI-Powered Responses**: Generates intelligent answers using Together.ai (Mixtral 8x7B)
-- **Stealth Mode**: Minimal, professional overlay that won't distract or raise suspicion
+- **QA-Focused Context**: Specialized prompts for automation testing, Selenium, Cypress, API testing
+- **Stealth Mode**: Professional overlay that won't distract or raise suspicion
 - **Multi-Platform**: Works on Google Meet, Zoom, and custom test environments
 
 ### 🎨 **Advanced UI/UX**
 
-- **Compact Mode**: Default minimal 380x160px overlay showing only AI response
-- **Expand Mode**: Full interface with transcription, debug info, and history
+- **Minimize Button**: Collapse panel to header-only view (60px height)
+- **Multi-Directional Resize**: Drag from 5 handles (bottom, left, right, corners)
+- **Smooth Drag & Resize**: Professional animations with viewport constraints
+- **Compact/Expand Modes**: Toggle between minimal (380x160px) and full interface
 - **Confidence Indicators**: Visual feedback on speech recognition quality (🟢🟡🔴)
 - **Token Streaming**: Real-time word-by-word response generation
-- **Drag & Dock**: Draggable panel with auto-docking to screen edges
+- **Auto-Docking**: Snaps to screen edges for convenience
 - **Emergency Hide**: Instant hide with Ctrl+Shift+H hotkey
+
+### � **Enhanced Resize System**
+
+- **Bottom Handle**: Vertical resize (height adjustment)
+- **Right/Left Handles**: Horizontal resize (width adjustment)
+- **Corner Handles**: Diagonal resize (both dimensions)
+- **Visual Feedback**: Hover effects with blue accent colors
+- **Smooth Constraints**: Prevents panel from leaving viewport
+- **State Persistence**: Remembers size and position across sessions
 
 ### 🛡️ **Reliability Features**
 
 - **Fallback Responses**: Smart offline responses when server unavailable
-- **Multiple CDN Support**: Socket.IO with primary + backup + unpkg fallbacks
 - **Health Monitoring**: Server connectivity checks and error handling
 - **Auto-hide**: Fades to 30% opacity during inactivity
 - **Context Awareness**: Auto-detects question categories (#API, #Selenium, #Behavioral)
+- **Error Recovery**: Robust handling of API failures and network issues
 
 ## 🚀 Quick Start
 
@@ -42,12 +54,8 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 git clone https://github.com/shrirajnaik04/interview-copilot.git
 cd interview-copilot
 
-# Install server dependencies
-npm install
-
-# Install client dependencies
-cd client
-npm install
+# Install all dependencies
+npm run install:all
 ```
 
 ### 2. Configuration
@@ -58,6 +66,80 @@ Create a `.env` file in the root directory:
 TOGETHER_API_KEY=your_together_ai_api_key_here
 PORT=3001
 ```
+
+### 3. Build Extension
+
+```bash
+npm run build:extension
+```
+
+### 4. Install Chrome Extension
+
+1. Open Chrome and go to `chrome://extensions/`
+2. Enable "Developer mode" (top right toggle)
+3. Click "Load unpacked"
+4. Select the `client/dist` directory
+
+### 5. Start Server
+
+```bash
+npm start
+```
+
+### 6. Test & Use
+
+1. **Test Setup**: Open `enhanced-test.html` to verify:
+   - Server connection health
+   - Speech recognition functionality
+   - AI response generation
+   - Extension overlay appearance
+2. **Live Use**: Join a Google Meet or Zoom call
+3. The floating overlay appears automatically
+4. Click the 🎤 button to start listening
+5. AI responses appear in real-time as the interviewer speaks
+
+## 🎯 QA Automation Context
+
+The AI is specifically optimized for **software testing interviews** with:
+
+### 👤 **Candidate Profile (Shriraj)**
+
+- Strong in automation using **Selenium, Cypress, Playwright**
+- Uses AI (LLMs) to generate test cases from user stories
+- Experience with **MCP servers, APIs, backend systems**
+- Skilled in **Git, CI/CD, Postman, JMeter, Shell scripting**
+- Led automation at Codemax, built smart test pipelines
+
+### 📋 **Response Guidelines**
+
+- **Straight to the point** answers (2-4 sentences)
+- **Simple English** with correct testing terminology
+- **Real-world examples** from automation experience
+- Focus on **automation topics** (frameworks, APIs, CI/CD)
+- Confident, experience-based responses
+
+### 💬 **Example QA Responses**
+
+**Q: How do you handle flaky tests?**  
+A: I find the cause — mostly it's bad selectors or timing issues. I fix waits, use retry logic, and improve selectors.
+
+**Q: How do you use AI in testing?**  
+A: I use LLMs like ChatGPT to convert user stories into test cases. At Codemax, this saved us 40% of manual effort.
+
+**Q: How do you test an API?**  
+A: I check all methods using Postman — status codes, response data, negative cases. I also use JMeter for load testing.
+npm install
+
+````
+
+### 2. Configuration
+
+Create a `.env` file in the root directory:
+
+```bash
+TOGETHER_API_KEY=your_together_ai_api_key_here
+PORT=3001
+````
 
 ### 3. Build Extension
 
@@ -114,48 +196,96 @@ interview-copilot/
 
 ## ⚙️ Configuration
 
-### Environment Variables (.env)
+### 🔑 **Environment Variables (.env)**
 
 ```bash
-TOGETHER_API_KEY=52ba9a34834d11fc356bf0fa8f82383bfdde132a0b5af27706c1c49e32f54fba
+TOGETHER_API_KEY=your_together_ai_api_key_here
 PORT=3001
 ```
 
-### Extension Settings
+### 🎛️ **Extension Settings** (Access via popup)
 
-Access via extension popup:
-
-- **Enable/Disable**: Toggle the assistant
-- **Server URL**: Backend server address (default: http://localhost:3001)
 - **API Key**: Together.ai API key (optional if set in .env)
+- **Model Selection**: Choose between Mixtral 8x7B or LLaMA 2 70B
+- **Server URL**: Backend server address (default: http://localhost:3001)
+- **Opacity**: Adjust transparency (50-100%)
+- **Confidence Indicators**: Show/hide speech recognition quality
+- **Streaming**: Enable/disable real-time response generation
+- **Auto-hide**: Fade overlay when inactive
 
-## 🎮 Keyboard Shortcuts
+## 🎮 Controls & Usage
 
-- `Ctrl+Shift+C`: Toggle overlay visibility
+### ⌨️ **Keyboard Shortcuts**
+
+- `Ctrl+Shift+H`: Emergency hide/show overlay
 - `Ctrl+Shift+L`: Toggle listening/recording
+- `Ctrl+Shift+E`: Toggle compact/expand mode
+
+### 🎛️ **Panel Controls**
+
+- **🎤 Toggle**: Start/stop listening
+- **🗕 Minimize**: Collapse to header-only view
+- **⇲ Expand**: Switch between compact/full mode
+- **⚙️ Settings**: Configure API key, model, opacity
+- **👁️ Emergency**: Quick hide button
+- **× Close**: Hide overlay completely
+
+### 🔄 **Resize Handles**
+
+- **Bottom Edge**: Drag to adjust height
+- **Left/Right Edges**: Drag to adjust width
+- **Corners**: Drag to resize both dimensions
+- **Header**: Drag to move panel position
+
+### 🎯 **During an Interview**
+
+1. **Join your video call** (Google Meet/Zoom)
+2. **Extension overlay appears** in top-right corner
+3. **Click 🎤 button** to start listening
+4. **Speak naturally** - AI responds to interviewer questions
+5. **Use minimize/resize** as needed for screen management
+6. **Emergency hide** if interviewer looks at screen
 
 ## 🔧 Technical Details
 
-### Speech Recognition
+### 🗣️ **Speech Recognition**
 
 - Uses browser's Web Speech API
 - Continuous listening with interim results
 - Automatic restart on interruption
 - Filters final transcripts for AI processing
 
-### AI Integration
+### 🤖 **AI Integration**
 
 - **Model**: `mistralai/Mixtral-8x7B-Instruct-v0.1`
 - **API**: Together.ai (OpenAI-compatible)
-- **Prompt Engineering**: Optimized for concise, professional interview responses
+- **Specialized Prompts**: Optimized for QA automation interviews
 - **Rate Limiting**: Built-in to prevent API overuse
 
-### Communication Flow
+### 📡 **Communication Flow**
 
 1. Browser captures audio → Web Speech API
-2. Extension transcribes → WebSocket to server
+2. Extension transcribes → HTTP/Fetch to server
 3. Server sends to Together.ai → AI generates response
 4. Response streams back → Extension displays in overlay
+
+### 🛠️ **Project Structure**
+
+```
+interview-copilot/
+├── server/                 # Node.js backend
+│   └── index.js           # Express server with QA context
+├── client/                # Chrome extension
+│   ├── src/
+│   │   ├── content.js     # Main extension logic with resize system
+│   │   ├── background.js  # Service worker
+│   │   ├── popup.html     # Settings popup
+│   │   └── popup.js       # Settings logic
+│   ├── manifest.json      # Extension manifest
+│   └── dist/             # Built extension files
+├── .env                  # Environment variables
+└── package.json          # Project dependencies
+```
 
 ## 🛡️ Privacy & Security
 
@@ -164,9 +294,29 @@ Access via extension popup:
 - **Minimal Data**: Only transcribed text and responses processed
 - **Secure Communication**: HTTPS/WSS in production
 
-## 🚀 Production Deployment
+## � Troubleshooting
 
-### Backend (Server)
+### **Extension Issues**
+
+- **Not loading**: Enable Chrome Developer mode, check manifest.json validity
+- **Speech not working**: Grant microphone permissions, verify HTTPS site
+- **Server connection failed**: Check server is running, verify port 3001, disable firewall
+
+### **AI Response Issues**
+
+- **No responses**: Verify Together.ai API key, check server logs, ensure API credits
+- **Poor quality**: Adjust confidence threshold, improve microphone setup
+
+### **Debug Mode**
+
+1. Open Chrome DevTools (F12)
+2. Check Console tab for errors
+3. Network tab shows API requests
+4. Storage tab shows extension settings
+
+## � Production Deployment
+
+### **Server Deployment**
 
 ```bash
 # Set production environment
@@ -177,61 +327,24 @@ export TOGETHER_API_KEY=your_api_key
 npm start
 ```
 
-### Extension
+### **Extension Distribution**
 
-1. Build for production: `npm run build`
+1. Build for production: `npm run build:extension`
 2. Package as .crx file for distribution
 3. Submit to Chrome Web Store (optional)
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Extension not loading:**
-
-- Check Chrome Developer mode is enabled
-- Verify manifest.json is valid
-- Check browser console for errors
-
-**Speech recognition not working:**
-
-- Ensure microphone permissions granted
-- Check if browser supports Web Speech API
-- Verify you're on HTTPS site (required for speech API)
-
-**Server connection failed:**
-
-- Verify server is running on correct port
-- Check firewall/antivirus blocking connections
-- Ensure CORS is properly configured
-
-**AI responses not generating:**
-
-- Verify Together.ai API key is valid
-- Check server logs for API errors
-- Ensure sufficient API credits
-
-### Debug Mode
-
-1. Open Chrome DevTools (F12)
-2. Check Console tab for errors
-3. Network tab shows WebSocket connections
-4. Storage tab shows extension settings
-
 ## 📝 API Reference
 
-### Server Endpoints
-
-**POST /api/generate-answer**
+### **POST /api/generate-answer**
 
 ```json
 {
-  "question": "Tell me about yourself",
-  "context": "Software engineering interview"
+  "question": "How do you handle flaky tests?",
+  "context": "Google Meet interview"
 }
 ```
 
-**GET /health**
+### **GET /health**
 
 ```json
 {
@@ -240,26 +353,18 @@ npm start
 }
 ```
 
-### WebSocket Events
-
-**Client → Server:**
-
-- `transcription`: Send transcribed text for AI processing
-
-**Server → Client:**
-
-- `answer`: AI-generated response
-- `error`: Error messages
-
 ## 🔮 Future Enhancements
 
-- [ ] **Multi-language support** for international interviews
-- [ ] **Custom prompt templates** for different interview types
-- [ ] **Interview analytics** and performance tracking
-- [ ] **Offline mode** with local AI models
-- [ ] **Voice synthesis** for audio responses
-- [ ] **Integration** with popular job boards
-- [ ] **Team collaboration** features for interview preparation
+- [ ] Multi-language support for international interviews
+- [ ] Custom prompt templates for different roles (Frontend, Backend, DevOps)
+- [ ] Interview analytics and performance tracking
+- [ ] Offline mode with local AI models
+- [ ] Voice synthesis for audio responses
+- [ ] Integration with popular job boards
+
+## ⚠️ Disclaimer
+
+This tool is for educational and practice purposes. Always follow your organization's policies and interview guidelines. Use responsibly and ethically.
 
 ## 📄 License
 
@@ -273,77 +378,6 @@ MIT License - feel free to modify and distribute.
 4. Test thoroughly
 5. Submit a pull request
 
-## 📁 Project Structure
-
-```
-interview-copilot/
-├── server/                 # Node.js backend
-│   └── index.js           # Express server with Socket.IO
-├── client/                # Chrome extension
-│   ├── src/
-│   │   ├── content.js     # Main extension logic
-│   │   ├── styles.css     # Enhanced UI styles
-│   │   ├── popup.html     # Extension popup
-│   │   └── background.js  # Service worker
-│   ├── manifest.json      # Extension manifest
-│   ├── dist/             # Built extension files
-│   └── build.bat         # Build script
-├── .env                  # Environment variables (API keys)
-├── enhanced-test.html    # Testing environment
-└── README.md            # This file
-```
-
-## 🎯 Usage
-
-### During an Interview
-
-1. **Join your video call** (Google Meet/Zoom)
-2. **Extension overlay appears** in top-right corner (compact mode)
-3. **Click 🎤 button** to start listening
-4. **Speak naturally** - AI responds to interviewer questions
-5. **Use Ctrl+Shift+H** for emergency hide if needed
-
-### Key Controls
-
-- **🎤 Toggle**: Start/stop listening
-- **⇲ Expand**: Switch between compact/full mode
-- **⚙️ Settings**: Configure API key, model, opacity
-- **👁️ Emergency**: Quick hide button
-- **Keyboard Shortcuts**:
-  - `Ctrl+Shift+H`: Emergency hide/show
-  - `Ctrl+Shift+L`: Toggle listening
-  - `Ctrl+Shift+E`: Expand/collapse mode
-
-## 🔧 Configuration
-
-### API Settings
-
-- **API Key**: Enter your Together.ai API key in settings
-- **Model Selection**: Choose between Mixtral 8x7B or LLaMA 2 70B
-- **Server URL**: Default `http://localhost:3001`
-
-### UI Preferences
-
-- **Opacity**: Adjust transparency (50-100%)
-- **Confidence Indicators**: Show/hide speech recognition quality
-- **Streaming**: Enable/disable real-time response generation
-- **Auto-hide**: Fade overlay when inactive
-
-## 🧪 Testing
-
-### Test Environment
-
-- Open `enhanced-test.html` in your browser
-- Use test buttons to verify:
-  - Server connection
-  - Speech recognition
-  - Socket.IO connectivity
-  - AI response generation
-
-## ⚠️ Disclaimer
-
-This tool is for educational and practice purposes. Always follow your organization's policies and interview guidelines. Use responsibly and ethically.
-
 ---
 
-**Built with ❤️ for interview success**
+**Built with ❤️ for QA automation interview success**
