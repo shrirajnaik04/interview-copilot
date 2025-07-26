@@ -34,8 +34,8 @@ class InterviewCopilotFetch {
     const serverAvailable = await this.testServerConnection();
     
     if (serverAvailable) {
-      console.log('✅ Server available - using Together.ai API');
-      this.updateStatus('Ready (Together.ai)', 'connected');
+      console.log('✅ Server available - using AI API');
+      this.updateStatus('Ready (AI Connected)', 'connected');
     } else {
       console.log('❌ Server unavailable - offline mode only');
       this.updateStatus('Ready (Offline)', 'ready');
@@ -65,11 +65,11 @@ class InterviewCopilotFetch {
   }
 
   async sendToAI(transcript) {
-    console.log('📤 Sending to Together.ai via HTTP:', transcript);
+    console.log('📤 Sending to AI API via HTTP:', transcript);
     
     try {
       // Show loading
-      this.displayAnswer('🤔 Generating AI response via Together.ai...');
+      this.displayAnswer('🤔 Generating AI response...');
       
       const response = await fetch(`${this.serverUrl}/api/generate-answer`, {
         method: 'POST',
@@ -90,8 +90,9 @@ class InterviewCopilotFetch {
       const data = await response.json();
       console.log('✅ Received AI response:', data);
       
-      // Display the response
-      this.displayAnswer('🤖 **[Together.ai]** ' + data.answer);
+      // Display the response with API source
+      const apiSource = data.apiUsed || 'AI';
+      this.displayAnswer(`🤖 **[${apiSource}]** ${data.answer}`);
       this.answers.push(data);
       
       return data.answer;
@@ -161,7 +162,7 @@ class InterviewCopilotFetch {
             <span style="font-size: 14px; color: #90CAF9; font-weight: 600;">🤖 AI Response</span>
             <div class="response-indicators" style="display: flex; align-items: center; gap: 8px;">
               <span id="response-confidence" class="confidence-indicator" style="font-size: 16px;">🟢</span>
-              <span class="response-source" style="font-size: 12px; color: #B0BEC5; font-weight: 500;">Together.ai</span>
+              <span class="response-source" style="font-size: 12px; color: #B0BEC5; font-weight: 500;">AI API</span>
             </div>
           </div>
           <div id="ai-response-streaming" class="response-text-streaming" style="
@@ -244,7 +245,7 @@ class InterviewCopilotFetch {
         
         <div class="setting-item" style="margin-bottom: 12px;">
           <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #90CAF9;">API Key:</label>
-          <input type="password" id="api-key-input" placeholder="Enter Together.ai API key" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1); color: white; font-size: 12px;">
+          <input type="password" id="api-key-input" placeholder="Enter AI API key" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1); color: white; font-size: 12px;">
         </div>
         
         <div class="setting-item" style="margin-bottom: 12px;">
@@ -1215,11 +1216,11 @@ class InterviewCopilotFetch {
     }
     
     // Update response confidence indicator
-    const isTogetherAI = answer.includes('**[Together.ai]**');
+    const isFromAI = answer.includes('**[Google Gemini]**') || answer.includes('**[Together.ai]**') || answer.includes('**[AI]**');
     const isOffline = answer.includes('**[OFFLINE MODE]**');
     
     this.updateConfidenceIndicator(
-      isTogetherAI ? 1.0 : isOffline ? 0.5 : 0.8, 
+      isFromAI ? 1.0 : isOffline ? 0.5 : 0.8, 
       'response'
     );
     
