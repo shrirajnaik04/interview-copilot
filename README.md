@@ -98,7 +98,7 @@ npm start
 4. Click the 🎤 button to start listening
 5. AI responses appear in real-time as the interviewer speaks
 
-## 🔧 QA Automation Context [Contecxt can be chnaged from index.js file inside server folder, else it will provide responses related to software testing by default.]
+## 🔧 QA Automation Context [Contecxt can be changed from index.js file inside server folder, else it will provide responses related to software testing by default.]
 
 This AI assistant is optimized to support **software testing interviews**, especially with a focus on **automation**.
 
