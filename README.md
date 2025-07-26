@@ -7,7 +7,8 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 ### 🎯 **Core Functionality**
 
 - **Real-time Speech Recognition**: Captures interviewer questions using Web Speech API
-- **AI-Powered Responses**: Generates intelligent answers using Together.ai (Mixtral 8x7B)
+- **Dual AI Integration**: Google Gemini (primary) + Together.ai (fallback) for maximum reliability
+- **Smart API Fallback**: Automatically switches APIs on rate limits or failures
 - **QA-Focused Context**: Specialized prompts for automation testing, Selenium, Cypress, API testing
 - **Stealth Mode**: Professional overlay that won't distract or raise suspicion
 - **Multi-Platform**: Works on Google Meet, Zoom, and custom test environments
@@ -34,8 +35,11 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 
 ### 🛡️ **Reliability Features**
 
+- **Dual API System**: Google Gemini (primary) + Together.ai (fallback)
+- **Automatic Failover**: Seamless switching when APIs fail or hit rate limits
+- **Secure Key Management**: Environment-based API key storage (no hardcoded keys)
+- **Health Monitoring**: Real-time server connectivity and API status checks
 - **Fallback Responses**: Smart offline responses when server unavailable
-- **Health Monitoring**: Server connectivity checks and error handling
 - **Auto-hide**: Fades to 30% opacity during inactivity
 - **Context Awareness**: Auto-detects question categories (#API, #Selenium, #Behavioral)
 - **Error Recovery**: Robust handling of API failures and network issues
@@ -46,7 +50,8 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 
 - Node.js 16+ installed
 - Chrome browser with Developer Mode enabled
-- Together.ai API key
+- Google Gemini API key (primary)
+- Together.ai API key (fallback)
 
 ### 1. Clone and Setup
 
@@ -63,9 +68,20 @@ npm run install:all
 Create a `.env` file in the root directory:
 
 ```bash
+# Primary AI API (Google Gemini)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Fallback AI API (Together.ai)
 TOGETHER_API_KEY=your_together_ai_api_key_here
+
+# Server Configuration
 PORT=3001
 ```
+
+**Get API Keys:**
+
+- **Gemini**: [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **Together.ai**: [Together.ai Platform](https://api.together.xyz/)
 
 ### 3. Build Extension
 
@@ -98,36 +114,37 @@ npm start
 4. Click the 🎤 button to start listening
 5. AI responses appear in real-time as the interviewer speaks
 
-## 🎯 QA Automation Context
+## 🔧 QA Automation Context [Context can be changed from index.js file inside server folder, else it will provide responses related to software testing by default.]
 
-The AI is specifically optimized for **software testing interviews** with:
+This AI assistant is optimized to support **software testing interviews**, especially with a focus on **automation**.
 
-### 👤 **Candidate Profile (Shriraj)**
+### 💡 Purpose
 
-- Strong in automation using **Selenium, Cypress, Playwright**
-- Uses AI (LLMs) to generate test cases from user stories
-- Experience with **MCP servers, APIs, backend systems**
-- Skilled in **Git, CI/CD, Postman, JMeter, Shell scripting**
-- Led automation at Codemax, built smart test pipelines
+- Designed to assist in **live QA interviews** by listening to questions in real time and generating context-aware answers.
+- Tailored for roles involving **test automation**, **API testing**, **CI/CD integration**, and **modern QA practices**.
 
-### 📋 **Response Guidelines**
+### 📋 Response Guidelines
 
-- **Straight to the point** answers (2-4 sentences)
-- **Simple English** with correct testing terminology
-- **Real-world examples** from automation experience
-- Focus on **automation topics** (frameworks, APIs, CI/CD)
-- Confident, experience-based responses
+- Answers are **short and to the point** (2–4 sentences).
+- Uses **simple English** with correct **software testing terminology**.
+- Provides **real-world examples** when necessary (e.g., handling flaky tests, automation frameworks).
+- Focus is on **automation tools** like Selenium, Cypress, Playwright, Postman, JMeter, and integration with CI/CD.
 
-### 💬 **Example QA Responses**
+### 💬 Sample QA Responses
 
 **Q: How do you handle flaky tests?**  
-A: I find the cause — mostly it's bad selectors or timing issues. I fix waits, use retry logic, and improve selectors.
+A: I check the cause — mostly unstable selectors or timing issues. I fix waits, add retry logic, and improve element locators.
 
 **Q: How do you use AI in testing?**  
-A: I use LLMs like ChatGPT to convert user stories into test cases. At Codemax, this saved us 40% of manual effort.
+A: I use AI tools like ChatGPT to convert user stories into test cases. It helps save time and covers edge cases.
 
 **Q: How do you test an API?**  
-A: I check all methods using Postman — status codes, response data, negative cases. I also use JMeter for load testing.
+A: I use Postman to test all request types, status codes, and data validation. For performance, I use JMeter.
+
+---
+
+You can customize this context further based on the job role or domain you are preparing for (e.g., security testing, mobile automation, performance engineering, etc.).
+
 npm install
 
 ````
@@ -199,8 +216,40 @@ interview-copilot/
 ### 🔑 **Environment Variables (.env)**
 
 ```bash
+# Primary AI API (Google Gemini)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Fallback AI API (Together.ai)
 TOGETHER_API_KEY=your_together_ai_api_key_here
+
+# Server Configuration
 PORT=3001
+```
+
+### 🔄 **API Management**
+
+The system uses **Google Gemini as primary** and **Together.ai as fallback**:
+
+**Manual Toggle:**
+
+- Visit: `http://localhost:3001/toggle-api` to switch primary API
+- Check status: `http://localhost:3001/health` to see current API
+
+**Automatic Fallback:**
+
+- Activates when primary API fails (rate limits, timeouts, errors)
+- Seamless switching without interrupting your interview
+- Response includes `"fallbackUsed": true` to indicate fallback was used
+
+**Response Tracking:**
+
+```json
+{
+  "answer": "Your response...",
+  "apiUsed": "Google Gemini", // Shows which API provided the answer
+  "fallbackUsed": false, // Indicates if fallback was triggered
+  "timestamp": "2025-07-26T16:45:30.099Z"
+}
 ```
 
 ### 🎛️ **Extension Settings** (Access via popup)
@@ -257,17 +306,20 @@ PORT=3001
 
 ### 🤖 **AI Integration**
 
-- **Model**: `mistralai/Mixtral-8x7B-Instruct-v0.1`
-- **API**: Together.ai (OpenAI-compatible)
+- **Primary Model**: Google Gemini 1.5 Flash (fast, efficient responses)
+- **Fallback Model**: `mistralai/Mixtral-8x7B-Instruct-v0.1` (via Together.ai)
+- **Auto-Switching**: Seamless fallback on rate limits or API failures
 - **Specialized Prompts**: Optimized for QA automation interviews
-- **Rate Limiting**: Built-in to prevent API overuse
+- **Rate Protection**: Built-in safeguards to prevent API overuse
+- **Response Tracking**: Indicates which API was used and if fallback occurred
 
 ### 📡 **Communication Flow**
 
 1. Browser captures audio → Web Speech API
 2. Extension transcribes → HTTP/Fetch to server
-3. Server sends to Together.ai → AI generates response
-4. Response streams back → Extension displays in overlay
+3. Server tries Gemini API → AI generates response
+4. If Gemini fails → Automatically tries Together.ai fallback
+5. Response streams back → Extension displays in overlay with API source
 
 ### 🛠️ **Project Structure**
 
@@ -304,8 +356,9 @@ interview-copilot/
 
 ### **AI Response Issues**
 
-- **No responses**: Verify Together.ai API key, check server logs, ensure API credits
+- **No responses**: Verify API keys (Gemini + Together.ai), check server logs, ensure API credits
 - **Poor quality**: Adjust confidence threshold, improve microphone setup
+- **Fallback activated**: Check Gemini API status, review rate limits
 
 ### **Debug Mode**
 
@@ -321,7 +374,8 @@ interview-copilot/
 ```bash
 # Set production environment
 export NODE_ENV=production
-export TOGETHER_API_KEY=your_api_key
+export GEMINI_API_KEY=your_gemini_key
+export TOGETHER_API_KEY=your_together_key
 
 # Start with PM2 or similar
 npm start
@@ -344,22 +398,45 @@ npm start
 }
 ```
 
+**Response:**
+
+```json
+{
+  "answer": "I find the cause — mostly it's bad selectors or timing issues...",
+  "question": "How do you handle flaky tests?",
+  "apiUsed": "Google Gemini",
+  "fallbackUsed": false,
+  "timestamp": "2025-07-26T16:45:30.099Z"
+}
+```
+
 ### **GET /health**
 
 ```json
 {
   "status": "OK",
-  "timestamp": "2024-01-01T00:00:00.000Z"
+  "timestamp": "2025-07-26T16:45:30.099Z",
+  "apiInUse": "Google Gemini"
+}
+```
+
+### **GET /toggle-api**
+
+```json
+{
+  "apiInUse": "Together.ai",
+  "message": "Switched to Together.ai"
 }
 ```
 
 ## 🔮 Future Enhancements
 
+- [ ] Voice synthesis for audio responses
 - [ ] Multi-language support for international interviews
 - [ ] Custom prompt templates for different roles (Frontend, Backend, DevOps)
 - [ ] Interview analytics and performance tracking
 - [ ] Offline mode with local AI models
-- [ ] Voice synthesis for audio responses
+- [ ] Additional AI provider integrations (OpenAI, Claude)
 - [ ] Integration with popular job boards
 
 ## ⚠️ Disclaimer

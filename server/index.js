@@ -3,7 +3,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const axios = require('axios');
-require('dotenv').config();
+const path = require('path');
+
+// Load environment variables from the root directory
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const app = express();
 const server = http.createServer(app);
@@ -15,17 +18,106 @@ const io = socketIo(server, {
 });
 
 const PORT = process.env.PORT || 3001;
-const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY || "52ba9a34834d11fc356bf0fa8f82383bfdde132a0b5af27706c1c49e32f54fba";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY;
+
+// Validate API keys
+if (!GEMINI_API_KEY) {
+  console.warn('⚠️  GEMINI_API_KEY not found in environment variables');
+}
+if (!TOGETHER_API_KEY) {
+  console.warn('⚠️  TOGETHER_API_KEY not found in environment variables');
+}
+
+// Choose which API to use (can be toggled)
+let USE_GEMINI = true; // Set to false to use Together.ai
 
 app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    apiInUse: USE_GEMINI ? 'Google Gemini' : 'Together.ai'
+  });
 });
 
-// LLM API endpoint
+// Function to try Gemini API
+async function tryGeminiAPI(prompt) {
+  if (!GEMINI_API_KEY) {
+    throw new Error('Gemini API key not configured');
+  }
+  
+  console.log('🔮 Trying Google Gemini API...');
+  const geminiResponse = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    contents: [{
+      parts: [{
+        text: prompt
+      }]
+    }],
+    generationConfig: {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 150,
+    }
+  }, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    timeout: 10000 // 10 second timeout
+  });
+
+  return {
+    answer: geminiResponse.data.candidates[0].content.parts[0].text.trim(),
+    apiUsed: 'Google Gemini'
+  };
+}
+
+// Function to try Together.ai API
+async function tryTogetherAPI(prompt) {
+  if (!TOGETHER_API_KEY) {
+    throw new Error('Together.ai API key not configured');
+  }
+  
+  console.log('🤖 Trying Together.ai API...');
+  const togetherResponse = await axios.post('https://api.together.xyz/v1/chat/completions', {
+    model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    messages: [
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    max_tokens: 150,
+    temperature: 0.7,
+    stream: false
+  }, {
+    headers: {
+      'Authorization': `Bearer ${TOGETHER_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    timeout: 10000 // 10 second timeout
+  });
+
+  return {
+    answer: togetherResponse.data.choices[0].message.content.trim(),
+    apiUsed: 'Together.ai (Mixtral)'
+  };
+}
+
+// API toggle endpoint
+app.get('/toggle-api', (req, res) => {
+  USE_GEMINI = !USE_GEMINI;
+  res.json({ 
+    apiInUse: USE_GEMINI ? 'Google Gemini' : 'Together.ai',
+    message: `Switched to ${USE_GEMINI ? 'Google Gemini' : 'Together.ai'}`
+  });
+});
+
+// LLM API endpoint with automatic fallback
 app.post('/api/generate-answer', async (req, res) => {
   try {
     const { question, context = '' } = req.body;
@@ -75,38 +167,67 @@ A: I check with valid and invalid inputs, blank fields, password rules, and sess
 Q: Can you explain your test framework?
 A: I used TestNG with Selenium. It supports groups, parallel runs, and reports. I added reusable functions and hooks.
 
-✅ Always answer fast, clear, and as if you’ve already done this work.
+✅ Always answer fast, clear, and as if you've already done this work.
 ✅ Keep it automation-focused.
-✅ Don’t use fancy English. Simple and confident is best.
+✅ Don't use fancy English. Simple and confident is best.
 
 Answer:`;
 
-    const response = await axios.post('https://api.together.xyz/v1/chat/completions', {
-      model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      max_tokens: 150,
-      temperature: 0.7,
-      stream: false
-    }, {
-      headers: {
-        'Authorization': `Bearer ${TOGETHER_API_KEY}`,
-        'Content-Type': 'application/json'
+    let result;
+    let fallbackUsed = false;
+
+    try {
+      // Try primary API first (based on USE_GEMINI setting)
+      if (USE_GEMINI) {
+        result = await tryGeminiAPI(prompt);
+      } else {
+        result = await tryTogetherAPI(prompt);
       }
+    } catch (primaryError) {
+      console.warn(`⚠️ Primary API failed: ${primaryError.message}`);
+      console.log('🔄 Attempting fallback to alternate API...');
+      
+      try {
+        // Try fallback API
+        if (USE_GEMINI) {
+          // Primary was Gemini, fallback to Together.ai
+          result = await tryTogetherAPI(prompt);
+          result.apiUsed += ' (Fallback)';
+        } else {
+          // Primary was Together.ai, fallback to Gemini
+          result = await tryGeminiAPI(prompt);
+          result.apiUsed += ' (Fallback)';
+        }
+        fallbackUsed = true;
+        console.log('✅ Fallback API succeeded!');
+      } catch (fallbackError) {
+        console.error('❌ Both APIs failed:');
+        console.error('Primary error:', primaryError.message);
+        console.error('Fallback error:', fallbackError.message);
+        
+        return res.status(500).json({ 
+          error: 'All APIs failed',
+          details: {
+            primary: primaryError.message,
+            fallback: fallbackError.message
+          }
+        });
+      }
+    }
+
+    res.json({ 
+      answer: result.answer, 
+      question, 
+      apiUsed: result.apiUsed,
+      fallbackUsed,
+      timestamp: new Date().toISOString() 
     });
 
-    const answer = response.data.choices[0].message.content.trim();
-    res.json({ answer, question, timestamp: new Date().toISOString() });
-
   } catch (error) {
-    console.error('Error generating answer:', error.message);
+    console.error('Unexpected error:', error.message);
     res.status(500).json({ 
-      error: 'Failed to generate answer',
-      details: error.response?.data || error.message 
+      error: 'Unexpected server error',
+      details: error.message 
     });
   }
 });
