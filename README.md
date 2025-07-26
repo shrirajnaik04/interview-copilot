@@ -1,61 +1,80 @@
-# Interview Co-Pilot MVP
+# 🤖 Interview Co-Pilot
 
-🤖 **Real-time AI assistant for interviews** - Helps candidates during live interviews on Google Meet and Zoom with AI-generated responses.
+A real-time AI assistant for interviews that provides intelligent responses during live video calls on Google Meet and Zoom.
 
-## 🎯 Features
+## 🌟 Features
 
-- **Real-time Speech Recognition**: Captures and transcribes interviewer questions using Web Speech API
-- **AI-Powered Responses**: Uses Together.ai (Mixtral-8x7B) to generate contextual interview answers
-- **Chrome Extension**: Floating UI overlay that doesn't interfere with video calls
-- **WebSocket Communication**: Real-time streaming between extension and backend
-- **Privacy-Focused**: Processes audio locally in browser, only sends text to AI
+### 🎯 **Core Functionality**
+- **Real-time Speech Recognition**: Captures interviewer questions using Web Speech API
+- **AI-Powered Responses**: Generates intelligent answers using Together.ai (Mixtral 8x7B)
+- **Stealth Mode**: Minimal, professional overlay that won't distract or raise suspicion
+- **Multi-Platform**: Works on Google Meet, Zoom, and custom test environments
+
+### 🎨 **Advanced UI/UX**
+- **Compact Mode**: Default minimal 380x160px overlay showing only AI response
+- **Expand Mode**: Full interface with transcription, debug info, and history
+- **Confidence Indicators**: Visual feedback on speech recognition quality (🟢🟡🔴)
+- **Token Streaming**: Real-time word-by-word response generation
+- **Drag & Dock**: Draggable panel with auto-docking to screen edges
+- **Emergency Hide**: Instant hide with Ctrl+Shift+H hotkey
+
+### 🛡️ **Reliability Features**
+- **Fallback Responses**: Smart offline responses when server unavailable
+- **Multiple CDN Support**: Socket.IO with primary + backup + unpkg fallbacks
+- **Health Monitoring**: Server connectivity checks and error handling
+- **Auto-hide**: Fades to 30% opacity during inactivity
+- **Context Awareness**: Auto-detects question categories (#API, #Selenium, #Behavioral)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Node.js 16+ installed
-- Chrome browser
-- Together.ai API key (provided: `52ba9a34834d11fc356bf0fa8f82383bfdde132a0b5af27706c1c49e32f54fba`)
+- Chrome browser with Developer Mode enabled
+- Together.ai API key
 
-### 1. Install Dependencies
-
+### 1. Clone and Setup
 ```bash
+git clone https://github.com/shrirajnaik04/interview-copilot.git
+cd interview-copilot
+
 # Install server dependencies
 npm install
 
 # Install client dependencies
 cd client
 npm install
-cd ..
 ```
 
-### 2. Start the Backend Server
-
+### 2. Configuration
+Create a `.env` file in the root directory:
 ```bash
+TOGETHER_API_KEY=your_together_ai_api_key_here
+PORT=3001
+```
+
+### 3. Build Extension
+```bash
+cd client
+npm run build
+# Or use: build.bat on Windows
+```
+
+### 4. Install Chrome Extension
+1. Open Chrome and go to `chrome://extensions/`
+2. Enable "Developer mode" (top right toggle)
+3. Click "Load unpacked"
+4. Select the `client/dist` directory
+
+### 5. Start Server
+```bash
+cd ../
 npm start
 ```
 
-The server will run on `http://localhost:3001`
-
-### 3. Build and Install Chrome Extension
-
-```bash
-# Build the extension
-cd client
-npm run build
-# or use the batch file on Windows
-build.bat
-```
-
-### 4. Load Extension in Chrome
-
-1. Open Chrome and go to `chrome://extensions/`
-2. Enable "Developer mode" (top right toggle)
-3. Click "Load unpacked" and select the `client/dist` directory
-4. The extension icon should appear in your toolbar
-
-### 5. Use During Interview
+### 6. Test Setup
+- Open the test page: `enhanced-test.html`
+- Check that extension overlay appears
+- Test speech recognition and AI responses
 
 1. Join a Google Meet or Zoom call
 2. Click the extension icon to open settings (if needed)
@@ -243,6 +262,72 @@ MIT License - feel free to modify and distribute.
 4. Test thoroughly
 5. Submit a pull request
 
+## 📁 Project Structure
+
+```
+interview-copilot/
+├── server/                 # Node.js backend
+│   └── index.js           # Express server with Socket.IO
+├── client/                # Chrome extension
+│   ├── src/
+│   │   ├── content.js     # Main extension logic
+│   │   ├── styles.css     # Enhanced UI styles
+│   │   ├── popup.html     # Extension popup
+│   │   └── background.js  # Service worker
+│   ├── manifest.json      # Extension manifest
+│   ├── dist/             # Built extension files
+│   └── build.bat         # Build script
+├── .env                  # Environment variables (API keys)
+├── enhanced-test.html    # Testing environment
+└── README.md            # This file
+```
+
+## 🎯 Usage
+
+### During an Interview
+1. **Join your video call** (Google Meet/Zoom)
+2. **Extension overlay appears** in top-right corner (compact mode)
+3. **Click 🎤 button** to start listening
+4. **Speak naturally** - AI responds to interviewer questions
+5. **Use Ctrl+Shift+H** for emergency hide if needed
+
+### Key Controls
+- **🎤 Toggle**: Start/stop listening
+- **⇲ Expand**: Switch between compact/full mode
+- **⚙️ Settings**: Configure API key, model, opacity
+- **👁️ Emergency**: Quick hide button
+- **Keyboard Shortcuts**:
+  - `Ctrl+Shift+H`: Emergency hide/show
+  - `Ctrl+Shift+L`: Toggle listening
+  - `Ctrl+Shift+E`: Expand/collapse mode
+
+## 🔧 Configuration
+
+### API Settings
+- **API Key**: Enter your Together.ai API key in settings
+- **Model Selection**: Choose between Mixtral 8x7B or LLaMA 2 70B
+- **Server URL**: Default `http://localhost:3001`
+
+### UI Preferences
+- **Opacity**: Adjust transparency (50-100%)
+- **Confidence Indicators**: Show/hide speech recognition quality
+- **Streaming**: Enable/disable real-time response generation
+- **Auto-hide**: Fade overlay when inactive
+
+## 🧪 Testing
+
+### Test Environment
+- Open `enhanced-test.html` in your browser
+- Use test buttons to verify:
+  - Server connection
+  - Speech recognition
+  - Socket.IO connectivity
+  - AI response generation
+
+## ⚠️ Disclaimer
+
+This tool is for educational and practice purposes. Always follow your organization's policies and interview guidelines. Use responsibly and ethically.
+
 ---
 
-**Disclaimer**: This tool is for educational and practice purposes. Always follow your organization's policies and interview guidelines. Use responsibly and ethically.
+**Built with ❤️ for interview success**
