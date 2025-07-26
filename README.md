@@ -98,36 +98,37 @@ npm start
 4. Click the 🎤 button to start listening
 5. AI responses appear in real-time as the interviewer speaks
 
-## 🎯 QA Automation Context
+## 🔧 QA Automation Context [Contecxt can be chnaged from index.js file inside server folder, else it will provide responses related to software testing by default.]
 
-The AI is specifically optimized for **software testing interviews** with:
+This AI assistant is optimized to support **software testing interviews**, especially with a focus on **automation**.
 
-### 👤 **Candidate Profile (Shriraj)**
+### 💡 Purpose
 
-- Strong in automation using **Selenium, Cypress, Playwright**
-- Uses AI (LLMs) to generate test cases from user stories
-- Experience with **MCP servers, APIs, backend systems**
-- Skilled in **Git, CI/CD, Postman, JMeter, Shell scripting**
-- Led automation at Codemax, built smart test pipelines
+- Designed to assist in **live QA interviews** by listening to questions in real time and generating context-aware answers.
+- Tailored for roles involving **test automation**, **API testing**, **CI/CD integration**, and **modern QA practices**.
 
-### 📋 **Response Guidelines**
+### 📋 Response Guidelines
 
-- **Straight to the point** answers (2-4 sentences)
-- **Simple English** with correct testing terminology
-- **Real-world examples** from automation experience
-- Focus on **automation topics** (frameworks, APIs, CI/CD)
-- Confident, experience-based responses
+- Answers are **short and to the point** (2–4 sentences).
+- Uses **simple English** with correct **software testing terminology**.
+- Provides **real-world examples** when necessary (e.g., handling flaky tests, automation frameworks).
+- Focus is on **automation tools** like Selenium, Cypress, Playwright, Postman, JMeter, and integration with CI/CD.
 
-### 💬 **Example QA Responses**
+### 💬 Sample QA Responses
 
 **Q: How do you handle flaky tests?**  
-A: I find the cause — mostly it's bad selectors or timing issues. I fix waits, use retry logic, and improve selectors.
+A: I check the cause — mostly unstable selectors or timing issues. I fix waits, add retry logic, and improve element locators.
 
 **Q: How do you use AI in testing?**  
-A: I use LLMs like ChatGPT to convert user stories into test cases. At Codemax, this saved us 40% of manual effort.
+A: I use AI tools like ChatGPT to convert user stories into test cases. It helps save time and covers edge cases.
 
 **Q: How do you test an API?**  
-A: I check all methods using Postman — status codes, response data, negative cases. I also use JMeter for load testing.
+A: I use Postman to test all request types, status codes, and data validation. For performance, I use JMeter.
+
+---
+
+You can customize this context further based on the job role or domain you are preparing for (e.g., security testing, mobile automation, performance engineering, etc.).
+
 npm install
 
 ````
