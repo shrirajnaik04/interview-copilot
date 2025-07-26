@@ -5,12 +5,14 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 ## 🌟 Features
 
 ### 🎯 **Core Functionality**
+
 - **Real-time Speech Recognition**: Captures interviewer questions using Web Speech API
 - **AI-Powered Responses**: Generates intelligent answers using Together.ai (Mixtral 8x7B)
 - **Stealth Mode**: Minimal, professional overlay that won't distract or raise suspicion
 - **Multi-Platform**: Works on Google Meet, Zoom, and custom test environments
 
 ### 🎨 **Advanced UI/UX**
+
 - **Compact Mode**: Default minimal 380x160px overlay showing only AI response
 - **Expand Mode**: Full interface with transcription, debug info, and history
 - **Confidence Indicators**: Visual feedback on speech recognition quality (🟢🟡🔴)
@@ -19,6 +21,7 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 - **Emergency Hide**: Instant hide with Ctrl+Shift+H hotkey
 
 ### 🛡️ **Reliability Features**
+
 - **Fallback Responses**: Smart offline responses when server unavailable
 - **Multiple CDN Support**: Socket.IO with primary + backup + unpkg fallbacks
 - **Health Monitoring**: Server connectivity checks and error handling
@@ -28,11 +31,13 @@ A real-time AI assistant for interviews that provides intelligent responses duri
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 16+ installed
 - Chrome browser with Developer Mode enabled
 - Together.ai API key
 
 ### 1. Clone and Setup
+
 ```bash
 git clone https://github.com/shrirajnaik04/interview-copilot.git
 cd interview-copilot
@@ -46,13 +51,16 @@ npm install
 ```
 
 ### 2. Configuration
+
 Create a `.env` file in the root directory:
+
 ```bash
 TOGETHER_API_KEY=your_together_ai_api_key_here
 PORT=3001
 ```
 
 ### 3. Build Extension
+
 ```bash
 cd client
 npm run build
@@ -60,18 +68,21 @@ npm run build
 ```
 
 ### 4. Install Chrome Extension
+
 1. Open Chrome and go to `chrome://extensions/`
 2. Enable "Developer mode" (top right toggle)
 3. Click "Load unpacked"
 4. Select the `client/dist` directory
 
 ### 5. Start Server
+
 ```bash
 cd ../
 npm start
 ```
 
 ### 6. Test Setup
+
 - Open the test page: `enhanced-test.html`
 - Check that extension overlay appears
 - Test speech recognition and AI responses
@@ -285,6 +296,7 @@ interview-copilot/
 ## 🎯 Usage
 
 ### During an Interview
+
 1. **Join your video call** (Google Meet/Zoom)
 2. **Extension overlay appears** in top-right corner (compact mode)
 3. **Click 🎤 button** to start listening
@@ -292,6 +304,7 @@ interview-copilot/
 5. **Use Ctrl+Shift+H** for emergency hide if needed
 
 ### Key Controls
+
 - **🎤 Toggle**: Start/stop listening
 - **⇲ Expand**: Switch between compact/full mode
 - **⚙️ Settings**: Configure API key, model, opacity
@@ -304,11 +317,13 @@ interview-copilot/
 ## 🔧 Configuration
 
 ### API Settings
+
 - **API Key**: Enter your Together.ai API key in settings
 - **Model Selection**: Choose between Mixtral 8x7B or LLaMA 2 70B
 - **Server URL**: Default `http://localhost:3001`
 
 ### UI Preferences
+
 - **Opacity**: Adjust transparency (50-100%)
 - **Confidence Indicators**: Show/hide speech recognition quality
 - **Streaming**: Enable/disable real-time response generation
@@ -317,6 +332,7 @@ interview-copilot/
 ## 🧪 Testing
 
 ### Test Environment
+
 - Open `enhanced-test.html` in your browser
 - Use test buttons to verify:
   - Server connection

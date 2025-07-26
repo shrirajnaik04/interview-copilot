@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Fetch API Version</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f0f0f0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+      }
+      button {
+        padding: 12px 24px;
+        margin: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .success {
+        background: #4caf50;
+        color: white;
+      }
+      .error {
+        background: #f44336;
+        color: white;
+      }
+      .info {
+        background: #2196f3;
+        color: white;
+      }
+      .output {
+        background: #f5f5f5;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 6px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🤖 Interview Co-Pilot - Fetch API Test</h1>
+
+      <div style="margin: 20px 0">
+        <h3>Server Tests</h3>
+        <button class="info" onclick="testServerHealth()">
+          Test Server Health
+        </button>
+        <button class="info" onclick="testAIEndpoint()">
+          Test AI Endpoint
+        </button>
+        <div id="server-output" class="output">
+          Click buttons to test server...
+        </div>
+      </div>
+
+      <div style="margin: 20px 0">
+        <h3>Extension Tests</h3>
+        <button class="success" onclick="loadExtension()">
+          Load Extension (Fetch Version)
+        </button>
+        <button class="info" onclick="testSpeechRecognition()">
+          Test Speech Recognition
+        </button>
+        <button class="info" onclick="simulateTranscript()">
+          Simulate AI Request
+        </button>
+        <div id="extension-output" class="output">Extension not loaded...</div>
+      </div>
+
+      <div style="margin: 20px 0">
+        <h3>Manual Tests</h3>
+        <input
+          type="text"
+          id="manual-question"
+          placeholder="Enter a test question..."
+          style="width: 60%; padding: 10px; margin-right: 10px"
+        />
+        <button class="success" onclick="manualAITest()">Send to AI</button>
+        <div id="manual-output" class="output">
+          Enter a question and click Send to AI...
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function log(elementId, message, type = "info") {
+        const element = document.getElementById(elementId);
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix =
+          type === "error" ? "❌" : type === "success" ? "✅" : "📝";
+        element.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+        element.scrollTop = element.scrollHeight;
+      }
+
+      async function testServerHealth() {
+        log("server-output", "Testing server health...");
+        try {
+          const response = await fetch("http://localhost:3001/health");
+          const data = await response.json();
+          log(
+            "server-output",
+            `Server healthy: ${JSON.stringify(data)}`,
+            "success"
+          );
+        } catch (error) {
+          log("server-output", `Server error: ${error.message}`, "error");
+        }
+      }
+
+      async function testAIEndpoint() {
+        log("server-output", "Testing AI endpoint...");
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/generate-answer",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                question: "What is your experience with JavaScript?",
+                context: "Software engineering interview",
+              }),
+            }
+          );
+          const data = await response.json();
+          log(
+            "server-output",
+            `AI Response: ${data.answer.substring(0, 150)}...`,
+            "success"
+          );
+        } catch (error) {
+          log("server-output", `AI endpoint error: ${error.message}`, "error");
+        }
+      }
+
+      function loadExtension() {
+        log("extension-output", "Loading Fetch API extension...");
+
+        // Create a script element to load the content-fetch.js
+        const script = document.createElement("script");
+        script.src = "./client/dist/content-fetch.js";
+        script.onload = () => {
+          log(
+            "extension-output",
+            "Extension script loaded successfully",
+            "success"
+          );
+          // Check if extension is working
+          setTimeout(() => {
+            if (window.interviewCopilot) {
+              log(
+                "extension-output",
+                "Extension instance found and active",
+                "success"
+              );
+              log(
+                "extension-output",
+                `Status: ${window.interviewCopilot.status}`
+              );
+            } else {
+              log("extension-output", "Extension instance not found", "error");
+            }
+          }, 2000);
+        };
+        script.onerror = () => {
+          log("extension-output", "Failed to load extension script", "error");
+        };
+        document.head.appendChild(script);
+      }
+
+      function testSpeechRecognition() {
+        log("extension-output", "Testing speech recognition...");
+
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          log(
+            "extension-output",
+            "Speech Recognition not supported in this browser",
+            "error"
+          );
+          return;
+        }
+
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.onstart = () => {
+          log(
+            "extension-output",
+            "Speech recognition started - say something!",
+            "success"
+          );
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          const confidence = event.results[0][0].confidence;
+          log(
+            "extension-output",
+            `Recognized: "${transcript}" (confidence: ${(
+              confidence * 100
+            ).toFixed(1)}%)`,
+            "success"
+          );
+        };
+
+        recognition.onerror = (event) => {
+          log("extension-output", `Speech error: ${event.error}`, "error");
+        };
+
+        try {
+          recognition.start();
+        } catch (error) {
+          log(
+            "extension-output",
+            `Failed to start speech recognition: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      async function simulateTranscript() {
+        log("extension-output", "Simulating transcript processing...");
+
+        if (window.interviewCopilot) {
+          const testQuestion =
+            "Can you tell me about your experience with React?";
+          log("extension-output", `Simulating question: "${testQuestion}"`);
+
+          try {
+            await window.interviewCopilot.sendToAI(testQuestion);
+            log(
+              "extension-output",
+              "Transcript sent to AI successfully",
+              "success"
+            );
+          } catch (error) {
+            log(
+              "extension-output",
+              `Simulation error: ${error.message}`,
+              "error"
+            );
+          }
+        } else {
+          log(
+            "extension-output",
+            'Extension not loaded - click "Load Extension" first',
+            "error"
+          );
+        }
+      }
+
+      async function manualAITest() {
+        const question = document
+          .getElementById("manual-question")
+          .value.trim();
+        if (!question) {
+          log("manual-output", "Please enter a question first", "error");
+          return;
+        }
+
+        log("manual-output", `Testing: "${question}"`);
+
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/generate-answer",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                question: question,
+                context: "Manual test from debug page",
+              }),
+            }
+          );
+
+          const data = await response.json();
+          log("manual-output", `AI Response: ${data.answer}`, "success");
+        } catch (error) {
+          log("manual-output", `Error: ${error.message}`, "error");
+        }
+      }
+
+      // Auto-test server on page load
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          testServerHealth();
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

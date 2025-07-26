@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
+    'content-fetch': './src/content-fetch.js',
     content: './src/content.js',
     background: './src/background.js',
     popup: './src/popup.js'
