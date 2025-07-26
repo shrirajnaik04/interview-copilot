@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Meet - Interview Co-Pilot Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: white;
+      }
+      .test-container {
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 10px 5px;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
+      .status {
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+      .test-questions {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 25px;
+        border: 1px solid #ffeaa7;
+      }
+      .question {
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-left: 4px solid #007bff;
+        cursor: pointer;
+        border-radius: 0 8px 8px 0;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .question:hover {
+        background: #f8f9fa;
+        transform: translateX(5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      .instructions {
+        background: #e7f3ff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #b8daff;
+        margin-top: 20px;
+      }
+      .debug-section {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-family: "Consolas", monospace;
+        font-size: 12px;
+      }
+      .extension-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="extension-status" class="extension-status error">
+      Extension: Not Detected
+    </div>
+
+    <div class="test-container">
+      <div class="header">
+        <h1>🤖 Interview Co-Pilot Test Environment</h1>
+        <p>
+          Simulating Google Meet environment for testing the AI interview
+          assistant
+        </p>
+      </div>
+
+      <div id="status" class="status info">🔍 Checking system status...</div>
+
+      <div>
+        <h3>🧪 System Tests:</h3>
+        <button class="btn" onclick="testServerConnection()">
+          🔗 Test Server Connection
+        </button>
+        <button class="btn" onclick="testSpeechRecognition()">
+          🎤 Test Speech Recognition
+        </button>
+        <button class="btn" onclick="forceInitExtension()">
+          🔄 Force Init Extension
+        </button>
+        <button class="btn" onclick="testAIResponse()">
+          🤖 Test AI Response
+        </button>
+        <button class="btn" onclick="testSocketConnection()">
+          🔌 Test Socket Connection
+        </button>
+      </div>
+
+      <div class="test-questions">
+        <h3>🎤 Interview Questions (Click to simulate speech):</h3>
+        <div class="question" onclick="speakText(this.textContent)">
+          📝 Tell me about yourself and your professional background.
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          💻 What is your greatest strength as a software developer?
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          🚀 Describe a challenging project you worked on and how you overcame
+          obstacles.
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          🔍 How do you approach debugging and troubleshooting complex issues?
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          🛠️ What programming languages and technologies are you most
+          experienced with?
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          🎯 Where do you see yourself in five years in your career?
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3>📋 Quick Start Instructions:</h3>
+        <ol>
+          <li>
+            <strong>Install Extension:</strong> Load unpacked from
+            <code>E:\interview-copilot\client\dist</code>
+          </li>
+          <li>
+            <strong>Reload Page:</strong> Refresh this page after installing
+          </li>
+          <li>
+            <strong>Check Status:</strong> Extension overlay should appear in
+            top-right
+          </li>
+          <li>
+            <strong>Start Listening:</strong> Click the 🎤 button in the overlay
+          </li>
+          <li>
+            <strong>Test Questions:</strong> Click questions above to simulate
+            interviewer speech
+          </li>
+          <li>
+            <strong>Get AI Help:</strong> Watch for AI responses in the overlay
+          </li>
+        </ol>
+      </div>
+
+      <div class="debug-section">
+        <h3>🔧 Debug Console:</h3>
+        <div id="debug-log">Ready for testing...</div>
+      </div>
+    </div>
+
+    <script>
+      // Enhanced testing functions
+      let debugLog = document.getElementById("debug-log");
+
+      function log(message, type = "info") {
+        const timestamp = new Date().toLocaleTimeString();
+        const icon = type === "success" ? "✅" : type === "error" ? "❌" : "🔍";
+        debugLog.innerHTML += `<br>[${timestamp}] ${icon} ${message}`;
+        debugLog.scrollTop = debugLog.scrollHeight;
+        console.log(`[Interview Co-Pilot Test] ${message}`);
+      }
+
+      async function testServerConnection() {
+        const statusEl = document.getElementById("status");
+        statusEl.textContent = "🔍 Testing server connection...";
+        statusEl.className = "status info";
+        log("Testing server connection...");
+
+        try {
+          const response = await fetch("http://localhost:3001/health");
+          if (response.ok) {
+            const data = await response.json();
+            statusEl.textContent = `✅ Server is running! Status: ${data.status}`;
+            statusEl.className = "status success";
+            log("Server connection successful", "success");
+          } else {
+            throw new Error(`Server responded with ${response.status}`);
+          }
+        } catch (error) {
+          statusEl.textContent = `❌ Server connection failed: ${error.message}`;
+          statusEl.className = "status error";
+          log(`Server connection failed: ${error.message}`, "error");
+        }
+      }
+
+      function testSpeechRecognition() {
+        log("Testing speech recognition support...");
+
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          const statusEl = document.getElementById("status");
+          statusEl.textContent =
+            "❌ Speech recognition not supported in this browser";
+          statusEl.className = "status error";
+          log("Speech recognition not supported", "error");
+          return;
+        }
+
+        const statusEl = document.getElementById("status");
+        statusEl.textContent = "✅ Speech recognition is supported!";
+        statusEl.className = "status success";
+        log("Speech recognition is supported", "success");
+      }
+
+      function forceInitExtension() {
+        log("Attempting to force initialize extension...");
+
+        // Try to call the global init function
+        if (window.initInterviewCopilot) {
+          window.initInterviewCopilot();
+          log("Called initInterviewCopilot() function", "success");
+        } else {
+          log("initInterviewCopilot() function not found", "error");
+        }
+
+        // Check if overlay exists
+        setTimeout(() => {
+          const overlay = document.getElementById("interview-copilot-overlay");
+          if (overlay) {
+            log("Extension overlay detected!", "success");
+            updateExtensionStatus(true);
+          } else {
+            log("Extension overlay still not found", "error");
+            updateExtensionStatus(false);
+          }
+        }, 1000);
+      }
+
+      async function testAIResponse() {
+        log("Testing AI response generation...");
+
+        try {
+          const testQuestion = "What is your greatest strength?";
+          const response = await fetch(
+            "http://localhost:3001/api/generate-answer",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                question: testQuestion,
+                context: "Test interview scenario",
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            log(`AI Response: ${data.answer.substring(0, 100)}...`, "success");
+          } else {
+            throw new Error(`API responded with ${response.status}`);
+          }
+        } catch (error) {
+          log(`AI response test failed: ${error.message}`, "error");
+        }
+      }
+
+      async function testSocketConnection() {
+        log("Testing Socket.IO connection to server...");
+
+        try {
+          // First test if Socket.IO is available
+          if (typeof io === "undefined") {
+            log("Loading Socket.IO library...", "info");
+            await loadSocketIO();
+          }
+
+          const socket = io("http://localhost:3001", {
+            transports: ["websocket", "polling"],
+            timeout: 5000,
+          });
+
+          socket.on("connect", () => {
+            log("✅ Socket.IO connection successful!", "success");
+            socket.emit("ping", { timestamp: Date.now() });
+          });
+
+          socket.on("pong", (data) => {
+            log(
+              `🏓 Pong received! Latency: ${Date.now() - data.receivedAt}ms`,
+              "success"
+            );
+            socket.disconnect();
+          });
+
+          socket.on("connect_error", (error) => {
+            log(`❌ Socket connection error: ${error.message}`, "error");
+          });
+
+          setTimeout(() => {
+            if (!socket.connected) {
+              log("❌ Socket connection timeout", "error");
+              socket.disconnect();
+            }
+          }, 8000);
+        } catch (error) {
+          log(`❌ Socket test failed: ${error.message}`, "error");
+        }
+      }
+
+      function loadSocketIO() {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://cdn.socket.io/4.7.2/socket.io.min.js";
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      function speakText(text) {
+        log(`Speaking: "${text.substring(0, 50)}..."`);
+
+        if ("speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = 0.8;
+          utterance.pitch = 1;
+          speechSynthesis.speak(utterance);
+
+          const statusEl = document.getElementById("status");
+          statusEl.textContent = `🔊 Speaking: "${text.substring(0, 50)}..."`;
+          statusEl.className = "status info";
+        } else {
+          alert(
+            "Text-to-speech not supported. Speak this question manually: " +
+              text
+          );
+          log("Text-to-speech not supported", "error");
+        }
+      }
+
+      function updateExtensionStatus(isActive) {
+        const statusEl = document.getElementById("extension-status");
+        if (isActive) {
+          statusEl.textContent = "Extension: Active ✅";
+          statusEl.className = "extension-status success";
+        } else {
+          statusEl.textContent = "Extension: Not Detected ❌";
+          statusEl.className = "extension-status error";
+        }
+      }
+
+      // Check extension status on load
+      window.addEventListener("load", () => {
+        log("Page loaded, checking extension status...");
+
+        setTimeout(() => {
+          const overlay = document.getElementById("interview-copilot-overlay");
+          if (overlay) {
+            log("Interview Co-Pilot extension is active!", "success");
+            updateExtensionStatus(true);
+          } else {
+            log("Extension not detected. Please install and reload.", "error");
+            updateExtensionStatus(false);
+          }
+        }, 3000);
+      });
+
+      // Auto-test server connection
+      testServerConnection();
+      testSpeechRecognition();
+
+      // Periodic extension check
+      setInterval(() => {
+        const overlay = document.getElementById("interview-copilot-overlay");
+        updateExtensionStatus(!!overlay);
+      }, 5000);
+    </script>
+  </body>
+</html>

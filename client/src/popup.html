@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        width: 350px;
+        padding: 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+      }
+
+      .header p {
+        margin: 5px 0 0 0;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .setting-group {
+        margin-bottom: 15px;
+      }
+
+      .setting-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      .setting-group input[type="text"],
+      .setting-group input[type="url"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .setting-group input[type="checkbox"] {
+        margin-right: 8px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary {
+        background: #007bff;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #0056b3;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #545b62;
+      }
+
+      .status {
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 15px;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .help-text {
+        font-size: 11px;
+        color: #666;
+        margin-top: 3px;
+      }
+
+      .shortcuts {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .shortcuts h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .shortcuts ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .shortcuts li {
+        margin-bottom: 5px;
+      }
+
+      .shortcut-key {
+        background: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🤖 Interview Co-Pilot</h1>
+      <p>AI-powered interview assistant</p>
+    </div>
+
+    <form id="settingsForm">
+      <div class="setting-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="enabled" checked />
+          <label for="enabled">Enable Interview Co-Pilot</label>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label for="serverUrl">Server URL:</label>
+        <input
+          type="url"
+          id="serverUrl"
+          value="http://localhost:3001"
+          placeholder="http://localhost:3001"
+        />
+        <div class="help-text">URL of the Interview Co-Pilot server</div>
+      </div>
+
+      <div class="setting-group">
+        <label for="apiKey">Together.ai API Key:</label>
+        <input
+          type="text"
+          id="apiKey"
+          placeholder="Enter your Together.ai API key"
+        />
+        <div class="help-text">Optional: Leave empty to use server default</div>
+      </div>
+
+      <div class="buttons">
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <button type="button" id="testConnection" class="btn btn-secondary">
+          Test Server
+        </button>
+      </div>
+    </form>
+
+    <div id="status" class="status" style="display: none"></div>
+
+    <div class="shortcuts">
+      <h3>Keyboard Shortcuts:</h3>
+      <ul>
+        <li><span class="shortcut-key">Ctrl+Shift+C</span> - Toggle overlay</li>
+        <li>
+          <span class="shortcut-key">Ctrl+Shift+L</span> - Toggle listening
+        </li>
+      </ul>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

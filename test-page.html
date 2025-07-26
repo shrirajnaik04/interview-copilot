@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Co-Pilot Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px 5px;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .test-questions {
+        background: #fff3cd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      .question {
+        margin: 10px 0;
+        padding: 10px;
+        background: white;
+        border-left: 4px solid #007bff;
+        cursor: pointer;
+      }
+      .question:hover {
+        background: #f8f9fa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🤖 Interview Co-Pilot Test Page</h1>
+      <p>
+        This page simulates a Google Meet-like environment to test the Interview
+        Co-Pilot extension.
+      </p>
+
+      <div id="status" class="status info">Extension status: Checking...</div>
+
+      <div>
+        <h3>Test Controls:</h3>
+        <button class="btn" onclick="testServerConnection()">
+          Test Server Connection
+        </button>
+        <button class="btn" onclick="testSpeechRecognition()">
+          Test Speech Recognition
+        </button>
+        <button class="btn" onclick="simulateGoogleMeet()">
+          Simulate Google Meet URL
+        </button>
+      </div>
+
+      <div class="test-questions">
+        <h3>🎤 Test Questions (Click to speak these):</h3>
+        <div class="question" onclick="speakText(this.textContent)">
+          Tell me about yourself and your background in software development.
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          What is your greatest technical strength as a developer?
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          Describe a challenging project you worked on recently.
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          How do you handle debugging complex issues in your code?
+        </div>
+        <div class="question" onclick="speakText(this.textContent)">
+          What programming languages and frameworks are you most comfortable
+          with?
+        </div>
+      </div>
+
+      <div style="margin-top: 30px">
+        <h3>📋 Instructions:</h3>
+        <ol>
+          <li>Install the Interview Co-Pilot extension</li>
+          <li>Reload this page</li>
+          <li>The floating overlay should appear automatically</li>
+          <li>Click the 🎤 button to start listening</li>
+          <li>Click on test questions above to simulate interviewer speech</li>
+          <li>Watch for AI responses in the overlay</li>
+        </ol>
+      </div>
+    </div>
+
+    <script>
+      // Test functions
+      async function testServerConnection() {
+        const statusEl = document.getElementById("status");
+        statusEl.textContent = "Testing server connection...";
+        statusEl.className = "status info";
+
+        try {
+          const response = await fetch("http://localhost:3001/health");
+          if (response.ok) {
+            const data = await response.json();
+            statusEl.textContent = `Server is running! Status: ${data.status}`;
+            statusEl.className = "status success";
+          } else {
+            throw new Error(`Server responded with ${response.status}`);
+          }
+        } catch (error) {
+          statusEl.textContent = `Server connection failed: ${error.message}`;
+          statusEl.className = "status error";
+        }
+      }
+
+      function testSpeechRecognition() {
+        const statusEl = document.getElementById("status");
+
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          statusEl.textContent =
+            "Speech recognition not supported in this browser";
+          statusEl.className = "status error";
+          return;
+        }
+
+        statusEl.textContent = "Speech recognition is supported!";
+        statusEl.className = "status success";
+      }
+
+      function simulateGoogleMeet() {
+        // Change the URL to simulate Google Meet
+        const newUrl = window.location.href.replace(
+          window.location.pathname,
+          "/meet.google.com/test-interview"
+        );
+        window.history.pushState({}, "", newUrl);
+
+        const statusEl = document.getElementById("status");
+        statusEl.textContent =
+          "URL changed to simulate Google Meet. Extension should activate now.";
+        statusEl.className = "status info";
+
+        // Change back after 3 seconds
+        setTimeout(() => {
+          window.history.pushState({}, "", window.location.href.split("?")[0]);
+        }, 3000);
+      }
+
+      function speakText(text) {
+        if ("speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = 0.8;
+          utterance.pitch = 1;
+          speechSynthesis.speak(utterance);
+
+          const statusEl = document.getElementById("status");
+          statusEl.textContent = `Speaking: "${text.substring(0, 50)}..."`;
+          statusEl.className = "status info";
+        } else {
+          alert(
+            "Text-to-speech not supported. Speak this question manually: " +
+              text
+          );
+        }
+      }
+
+      // Check extension status on load
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const overlay = document.getElementById("interview-copilot-overlay");
+          const statusEl = document.getElementById("status");
+
+          if (overlay) {
+            statusEl.textContent = "Interview Co-Pilot extension is active!";
+            statusEl.className = "status success";
+          } else {
+            statusEl.textContent =
+              "Extension not detected. Please install and reload.";
+            statusEl.className = "status error";
+          }
+        }, 2000);
+      });
+
+      // Auto-test server connection
+      testServerConnection();
+
+      // Enhanced diagnostic function
+      function runDiagnostic() {
+        console.log("🔍 Running detailed diagnostic...");
+
+        // Check for JavaScript errors in extension
+        window.addEventListener("error", (e) => {
+          console.error("🚨 JavaScript Error detected:");
+          console.error("File:", e.filename);
+          console.error("Line:", e.lineno + ", Column:", e.colno);
+          console.error("Error:", e.error);
+
+          // Display error on page
+          const statusEl = document.getElementById("status");
+          statusEl.textContent = `JavaScript Error at line ${e.lineno}: ${e.error.message}`;
+          statusEl.className = "status error";
+        });
+
+        // Check for extension files
+        setTimeout(() => {
+          const scripts = Array.from(document.scripts);
+          const hasContentScript = scripts.some(
+            (script) => script.src && script.src.includes("content.js")
+          );
+          console.log("Content script loaded:", hasContentScript);
+
+          // Try manual init
+          if (window.initInterviewCopilot) {
+            try {
+              window.initInterviewCopilot();
+              console.log("✅ Manual initialization attempted");
+            } catch (error) {
+              console.error("❌ Manual init failed:", error);
+            }
+          }
+        }, 1000);
+      }
+
+      // Run diagnostic
+      runDiagnostic();
+    </script>
+  </body>
+</html>
