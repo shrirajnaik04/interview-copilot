@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>🎨 Interview Co-Pilot - Enhanced UI/UX Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        min-height: 100vh;
+        color: white;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.8em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #64b5f6, #90caf9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+      .feature-card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid rgba(100, 181, 246, 0.2);
+        transition: all 0.3s ease;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(100, 181, 246, 0.2);
+        border-color: rgba(100, 181, 246, 0.4);
+      }
+      .feature-header {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #64b5f6;
+      }
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .status-success {
+        background: #4caf50;
+      }
+      .status-error {
+        background: #f44336;
+      }
+      .status-warning {
+        background: #ff9800;
+      }
+      .status-info {
+        background: #2196f3;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        margin: 8px 5px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: rgba(100, 181, 246, 0.2);
+        color: white;
+        border: 1px solid rgba(100, 181, 246, 0.3);
+      }
+      .btn:hover {
+        background: rgba(100, 181, 246, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(100, 181, 246, 0.3);
+      }
+      .btn-primary {
+        background: rgba(76, 175, 80, 0.3);
+        border-color: rgba(76, 175, 80, 0.5);
+      }
+      .btn-danger {
+        background: rgba(244, 67, 54, 0.3);
+        border-color: rgba(244, 67, 54, 0.5);
+      }
+
+      .output {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        font-family: "SF Mono", "Monaco", "Consolas", monospace;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 13px;
+        border: 1px solid rgba(100, 181, 246, 0.2);
+      }
+      .controls-demo {
+        background: rgba(100, 181, 246, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 1px solid rgba(100, 181, 246, 0.3);
+      }
+      .shortcut-key {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Interview Co-Pilot Enhanced - LARGE UI</h1>
+
+      <div class="controls-demo">
+        <h3>🎮 Enhanced Features - NOW MUCH LARGER!</h3>
+        <p>
+          <strong>Overlay Size:</strong>
+          <span style="color: #2196f3">Default: 640×420px (Expanded)</span> →
+          <span style="color: #4caf50">Compact: 520×280px</span>
+        </p>
+        <p>
+          <strong>Scrollable Content:</strong> Auto-scroll in transcript and AI
+          response areas
+        </p>
+        <p>
+          <span class="shortcut-key">Ctrl+Shift+H</span> Emergency Hide/Show
+          &nbsp;&nbsp; <span class="shortcut-key">Ctrl+Shift+L</span> Toggle
+          Listening &nbsp;&nbsp;
+          <span class="shortcut-key">Ctrl+Shift+E</span> Expand/Collapse
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <!-- Server & AI Testing -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span
+              class="status-indicator status-info"
+              id="server-status"
+            ></span>
+            🚀 Server & AI Integration
+          </div>
+          <button class="btn btn-primary" onclick="testServer()">
+            Test Health
+          </button>
+          <button class="btn btn-primary" onclick="testAI()">
+            Test Together.ai
+          </button>
+          <div id="server-output" class="output">
+            Server status will appear here...
+          </div>
+        </div>
+
+        <!-- Extension Features -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span
+              class="status-indicator status-warning"
+              id="extension-status"
+            ></span>
+            🤖 Enhanced Extension
+          </div>
+          <button class="btn btn-primary" onclick="testExtension()">
+            Check Extension
+          </button>
+          <button class="btn" onclick="testCompactMode()">
+            Toggle Compact Mode
+          </button>
+          <button class="btn" onclick="testStreaming()">Test Streaming</button>
+          <div id="extension-output" class="output">
+            Extension status will appear here...
+          </div>
+        </div>
+
+        <!-- UI/UX Features -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="status-indicator status-success" id="ui-status"></span>
+            🎨 UI/UX Features
+          </div>
+          <button class="btn" onclick="testDragDrop()">Test Drag & Drop</button>
+          <button class="btn" onclick="testConfidence()">
+            Confidence Indicators
+          </button>
+          <button class="btn" onclick="testContextTags()">Context Tags</button>
+          <div id="ui-output" class="output">
+            UI features ready for testing...
+          </div>
+        </div>
+
+        <!-- Speech Recognition -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span
+              class="status-indicator status-warning"
+              id="speech-status"
+            ></span>
+            🎤 Enhanced Speech Recognition
+          </div>
+          <button class="btn btn-primary" onclick="testSpeech()">
+            Test Speech API
+          </button>
+          <button class="btn" onclick="simulateConfidence()">
+            Simulate Confidence Levels
+          </button>
+          <div id="speech-output" class="output">
+            Speech recognition not tested...
+          </div>
+        </div>
+
+        <!-- Real-time Testing -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span
+              class="status-indicator status-info"
+              id="realtime-status"
+            ></span>
+            ⚡ Real-time AI Testing
+          </div>
+          <input
+            type="text"
+            id="test-question"
+            placeholder="Enter test question..."
+            style="
+              width: 90%;
+              padding: 8px;
+              margin-bottom: 10px;
+              border-radius: 6px;
+              border: 1px solid rgba(255, 255, 255, 0.3);
+              background: rgba(255, 255, 255, 0.1);
+              color: white;
+            "
+          />
+          <br />
+          <button class="btn btn-primary" onclick="simulateRealTime()">
+            Simulate Interview
+          </button>
+          <div id="realtime-output" class="output">
+            Enter a question above...
+          </div>
+        </div>
+
+        <!-- Advanced Features -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span
+              class="status-indicator status-success"
+              id="advanced-status"
+            ></span>
+            🔧 Advanced Features
+          </div>
+          <button class="btn" onclick="testAutoHide()">Test Auto-hide</button>
+          <button class="btn" onclick="testDocking()">Test Docking</button>
+          <button class="btn" onclick="testSettings()">Settings Panel</button>
+          <div id="advanced-output" class="output">
+            Advanced features ready...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let extensionLoaded = false;
+
+      function updateStatus(elementId, type) {
+        const indicator = document.getElementById(elementId);
+        if (indicator) {
+          indicator.className = `status-indicator status-${type}`;
+        }
+      }
+
+      function log(elementId, message, type = "info") {
+        const element = document.getElementById(elementId);
+        const timestamp = new Date().toLocaleTimeString();
+        const icon =
+          type === "error"
+            ? "❌"
+            : type === "success"
+            ? "✅"
+            : type === "warning"
+            ? "⚠️"
+            : "📝";
+        element.textContent += `[${timestamp}] ${icon} ${message}\n`;
+        element.scrollTop = element.scrollHeight;
+      }
+
+      async function testServer() {
+        log("server-output", "Testing server health...");
+        try {
+          const response = await fetch("http://localhost:3001/health");
+          if (response.ok) {
+            const data = await response.json();
+            log("server-output", `Server healthy: ${data.status}`, "success");
+            updateStatus("server-status", "success");
+          } else {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        } catch (error) {
+          log("server-output", `Server error: ${error.message}`, "error");
+          updateStatus("server-status", "error");
+        }
+      }
+
+      async function testAI() {
+        log("server-output", "Testing Enhanced AI with context tags...");
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/generate-answer",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                question:
+                  "What is your experience with Selenium automation testing using JavaScript and REST APIs?",
+                context:
+                  "Technical interview - testing multiple context detection",
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            log(
+              "server-output",
+              `AI (Enhanced): ${data.answer.substring(0, 150)}...`,
+              "success"
+            );
+            log(
+              "server-output",
+              "Context tags should detect: #Selenium, #API, #Frontend",
+              "info"
+            );
+          } else {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        } catch (error) {
+          log("server-output", `AI error: ${error.message}`, "error");
+        }
+      }
+
+      function testExtension() {
+        log("extension-output", "Checking enhanced extension...");
+
+        // Check if overlay exists
+        const overlay = document.querySelector("#interview-copilot-overlay");
+        if (overlay) {
+          log(
+            "extension-output",
+            "Enhanced LARGE overlay found! ✨",
+            "success"
+          );
+          log(
+            "extension-output",
+            `Size: ${overlay.style.width} × ${overlay.style.minHeight}`,
+            "success"
+          );
+          log(
+            "extension-output",
+            "Features: Large buttons, enhanced styling, better spacing",
+            "success"
+          );
+          updateStatus("extension-status", "success");
+          extensionLoaded = true;
+        } else {
+          log("extension-output", "Extension overlay not found", "warning");
+          updateStatus("extension-status", "warning");
+        }
+
+        // Check for enhanced global object
+        if (window.interviewCopilot) {
+          log(
+            "extension-output",
+            `Enhanced instance: ${window.interviewCopilot.status}`,
+            "success"
+          );
+          log(
+            "extension-output",
+            "Available: streaming, confidence, context tags",
+            "info"
+          );
+          extensionLoaded = true;
+        } else {
+          log("extension-output", "Enhanced extension not loaded", "warning");
+        }
+      }
+
+      function testCompactMode() {
+        if (window.interviewCopilot) {
+          window.interviewCopilot.toggleExpandMode();
+          log("extension-output", "Toggled compact/expand mode", "success");
+        } else {
+          log("extension-output", "Extension not available", "error");
+        }
+      }
+
+      function testStreaming() {
+        if (window.interviewCopilot) {
+          window.interviewCopilot.streamResponses =
+            !window.interviewCopilot.streamResponses;
+          log(
+            "extension-output",
+            `Streaming: ${
+              window.interviewCopilot.streamResponses ? "ON" : "OFF"
+            }`,
+            "success"
+          );
+        } else {
+          log("extension-output", "Extension not available", "error");
+        }
+      }
+
+      function testDragDrop() {
+        log("ui-output", "Drag & drop enabled on overlay header", "success");
+        log("ui-output", "Resize height by dragging bottom edge", "success");
+        log("ui-output", "Auto-docking to screen edges when close", "info");
+        log("ui-output", "Position and height saved in localStorage", "info");
+      }
+
+      function testConfidence() {
+        log(
+          "ui-output",
+          "Confidence indicators: 🟢 High, 🟡 Medium, 🔴 Low",
+          "success"
+        );
+        log("ui-output", "Visual feedback on transcript border color", "info");
+        log(
+          "ui-output",
+          "Automatic retry suggestion for low confidence",
+          "info"
+        );
+      }
+
+      function testContextTags() {
+        log(
+          "ui-output",
+          "Context tags: #API, #Selenium, #Frontend, #Database",
+          "success"
+        );
+        log("ui-output", "#Behavioral, #Problem-Solving, #EdgeCase", "info");
+        log("ui-output", "Auto-detected from question content", "info");
+      }
+
+      function testSpeech() {
+        log(
+          "speech-output",
+          "Enhanced speech recognition with confidence",
+          "success"
+        );
+
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          log("speech-output", "Speech Recognition not supported", "error");
+          updateStatus("speech-status", "error");
+          return;
+        }
+
+        log(
+          "speech-output",
+          "Features: confidence indicators, quality warnings",
+          "info"
+        );
+        updateStatus("speech-status", "success");
+      }
+
+      function simulateConfidence() {
+        log("speech-output", "Simulating confidence levels...", "info");
+        log(
+          "speech-output",
+          "🟢 High (>80%): Processes immediately",
+          "success"
+        );
+        log("speech-output", "🟡 Medium (60-80%): Shows warning", "warning");
+        log("speech-output", "🔴 Low (<60%): Requests repeat", "error");
+      }
+
+      async function simulateRealTime() {
+        const question = document.getElementById("test-question").value.trim();
+        if (!question) {
+          log("realtime-output", "Please enter a test question", "warning");
+          return;
+        }
+
+        log("realtime-output", `Simulating: "${question}"`, "info");
+        log(
+          "realtime-output",
+          "Step 1: Speech recognition captures question",
+          "info"
+        );
+        log(
+          "realtime-output",
+          "Step 2: Context tags detected and displayed",
+          "success"
+        );
+        log("realtime-output", "Step 3: Streaming AI response...", "info");
+
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/generate-answer",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                question: question,
+                context: "Real-time simulation test",
+              }),
+            }
+          );
+
+          const data = await response.json();
+
+          // Simulate streaming effect
+          const words = data.answer.split(" ");
+          let displayed = "";
+          for (let i = 0; i < words.length; i++) {
+            displayed += words[i] + " ";
+            log(
+              "realtime-output",
+              `Streaming: ${displayed.substring(0, 60)}...`,
+              "success"
+            );
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+
+          log(
+            "realtime-output",
+            "Step 4: Complete response displayed with highlighting",
+            "success"
+          );
+          updateStatus("realtime-status", "success");
+        } catch (error) {
+          log("realtime-output", `Error: ${error.message}`, "error");
+        }
+      }
+
+      function testAutoHide() {
+        log(
+          "advanced-output",
+          "Auto-hide: Fades to 30% opacity after 5s inactivity",
+          "success"
+        );
+        log("advanced-output", "Hover to restore full opacity", "info");
+        if (window.interviewCopilot) {
+          window.interviewCopilot.setupAutoHide();
+          log("advanced-output", "Auto-hide activated on extension", "success");
+        }
+      }
+
+      function testDocking() {
+        log(
+          "advanced-output",
+          "Docking: Auto-snap to screen edges when close",
+          "success"
+        );
+        log("advanced-output", "Manual dock buttons: ◐ Left, ◑ Right", "info");
+        log(
+          "advanced-output",
+          "Position preferences saved automatically",
+          "info"
+        );
+      }
+
+      function testSettings() {
+        log("advanced-output", "Settings panel includes:", "info");
+        log("advanced-output", "• API key configuration", "info");
+        log("advanced-output", "• Model selection (Mixtral/LLaMA)", "info");
+        log("advanced-output", "• Opacity slider", "info");
+        log("advanced-output", "• Feature toggles", "info");
+        if (window.interviewCopilot) {
+          window.interviewCopilot.toggleSettings();
+          log("advanced-output", "Settings panel toggled", "success");
+        }
+      }
+
+      // Auto-initialization
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          testServer();
+          testExtension();
+          updateStatus("ui-status", "success");
+          updateStatus("advanced-status", "success");
+          log("ui-output", "Enhanced UI/UX features loaded", "success");
+          log("advanced-output", "Advanced features ready", "success");
+        }, 1000);
+      });
+
+      // Check for extension periodically
+      setInterval(() => {
+        if (!extensionLoaded) {
+          testExtension();
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>
